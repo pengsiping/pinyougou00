@@ -6,7 +6,8 @@
         list:[],
         entity:{},
         ids:[],
-        searchEntity:{}
+        searchEntity:{},
+        status:['未付款','已付款','未发货','已发货']
     },
     methods: {
         searchList:function (curPage) {

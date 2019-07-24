@@ -182,4 +182,6 @@ public class SellerServiceImpl extends CoreServiceImpl<TbSeller>  implements Sel
 		sellerMapper.updateByPrimaryKey(tbSeller);
 	}
 
+
+
 }
