@@ -3,6 +3,8 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+
+    <!--运营商审核后生成添加es-->
     <bean class="org.apache.rocketmq.client.consumer.DefaultMQPushConsumer" init-method="start" destroy-method="shutdown">
         <property name="namesrvAddr" value="127.0.0.1:9876"></property>
         <!--设置为广播模式-->
@@ -20,4 +22,21 @@
     </bean>
 
     <bean class="com.pinyougou.search.listener.GoodsMessageListener" id="messageListener"></bean>
+    <!--上下架信息,添加到es-->
+    <bean class="org.apache.rocketmq.client.consumer.DefaultMQPushConsumer" init-method="start" destroy-method="shutdown">
+        <property name="namesrvAddr" value="127.0.0.1:9876"></property>
+        <!--设置为广播模式-->
+        <property name="consumerGroup" value="consumer_onSale_group"></property>
+        <!--集群模式-->
+        <property name="messageModel" value="BROADCASTING"></property>
+
+        <property name="subscription">
+            <map>
+                <entry key="OnSale_Topic" value="*"></entry>
+            </map>
+        </property>
+
+        <property name="messageListener" ref="messageListener"></property>
+    </bean>
+
 </beans>

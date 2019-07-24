@@ -19,6 +19,9 @@
         <fileset id="fileset2" name="ApplicationContext_trans" removed="false">
           <file>file://$MODULE_DIR$/src/main/resources/spring/applicationContext_trans.xml</file>
         </fileset>
+        <fileset id="fileset3" name="Spring Producer" removed="false">
+          <file>file://$MODULE_DIR$/src/main/resources/spring/spring-producer.xml</file>
+        </fileset>
       </configuration>
     </facet>
   </component>

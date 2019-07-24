@@ -22,6 +22,9 @@
         <fileset id="fileset3" name="SpringContext Redis" removed="false">
           <file>file://$MODULE_DIR$/src/main/resources/spring/springContext-redis.xml</file>
         </fileset>
+        <fileset id="fileset4" name="ApplicationContext_task" removed="false">
+          <file>file://$MODULE_DIR$/src/main/resources/spring/applicationContext_task.xml</file>
+        </fileset>
       </configuration>
     </facet>
   </component>

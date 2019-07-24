@@ -2,6 +2,7 @@ package com.pinyougou.search.service.impl;
 
 import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
+import com.pinyougou.pojo.TbGoods;
 import com.pinyougou.pojo.TbItem;
 import com.pinyougou.search.dao.ItemSearchDao;
 import com.pinyougou.search.service.ItemSearchService;
@@ -294,5 +295,7 @@ public class ItemSearchServiceImpl implements ItemSearchService {
         deleteQuery.setQuery(QueryBuilders.termsQuery("goodsId",ids));
         elasticsearchTemplate.delete(deleteQuery,TbItem.class);
     }
+
+
 
 }

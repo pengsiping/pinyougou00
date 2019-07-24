@@ -102,5 +102,25 @@ public class ItemCatServiceImpl extends CoreServiceImpl<TbItemCat>  implements I
         }
         return tbItemCats;
     }
-	
+
+
+    /**
+     * 获取商品分类
+     * @param parentId
+     * @return
+     */
+
+    @Override
+    public List<TbItemCat> findItemList(Long parentId) {
+        List<TbItemCat> itemCatList = (List<TbItemCat>) redisTemplate.boundHashOps("itemCatList").get(parentId);
+        if(itemCatList!=null){
+            return itemCatList;
+        }
+        TbItemCat tbItemCat = new TbItemCat();
+        tbItemCat.setParentId(parentId);
+        List<TbItemCat> select = itemCatMapper.select(tbItemCat);
+        redisTemplate.boundHashOps("itemCatList").put(parentId,select);
+        return select;
+    }
+
 }
