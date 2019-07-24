@@ -6,21 +6,17 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.pinyougou.IdWorker;
 import com.pinyougou.core.service.CoreServiceImpl;
-import com.pinyougou.mapper.TbItemMapper;
-import com.pinyougou.mapper.TbOrderItemMapper;
-import com.pinyougou.mapper.TbOrderMapper;
-import com.pinyougou.mapper.TbPayLogMapper;
+import com.pinyougou.mapper.*;
 import com.pinyougou.order.service.OrderService;
-import com.pinyougou.pojo.TbItem;
-import com.pinyougou.pojo.TbOrder;
-import com.pinyougou.pojo.TbOrderItem;
-import com.pinyougou.pojo.TbPayLog;
+import com.pinyougou.pojo.*;
+import com.sun.tools.javac.main.Main;
 import entity.Cart;
+import entity.Result;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import tk.mybatis.mapper.entity.Example;
-
+import org.apache.commons.beanutils.ConvertUtils;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -52,6 +48,8 @@ public class OrderServiceImpl extends CoreServiceImpl<TbOrder> implements OrderS
 
     @Autowired
     private TbPayLogMapper tbPayLogMapper;
+    @Autowired
+    private TbSellerMapper sellerMapper;
 
     @Autowired
     public OrderServiceImpl(TbOrderMapper orderMapper) {
@@ -76,10 +74,8 @@ public class OrderServiceImpl extends CoreServiceImpl<TbOrder> implements OrderS
     @Override
     public PageInfo<TbOrder> findPage(Integer pageNo, Integer pageSize, TbOrder order) {
         PageHelper.startPage(pageNo, pageSize);
-
         Example example = new Example(TbOrder.class);
         Example.Criteria criteria = example.createCriteria();
-
         if (order != null) {
             if (StringUtils.isNotBlank(order.getPaymentType())) {
                 criteria.andLike("paymentType", "%" + order.getPaymentType() + "%");
@@ -142,7 +138,7 @@ public class OrderServiceImpl extends CoreServiceImpl<TbOrder> implements OrderS
                 //criteria.andSourceTypeLike("%"+order.getSourceType()+"%");
             }
             if (StringUtils.isNotBlank(order.getSellerId())) {
-                criteria.andLike("sellerId", "%" + order.getSellerId() + "%");
+                criteria.andEqualTo("sellerId",order.getSellerId());
                 //criteria.andSellerIdLike("%"+order.getSellerId()+"%");
             }
 
@@ -198,6 +194,65 @@ public class OrderServiceImpl extends CoreServiceImpl<TbOrder> implements OrderS
 
         }
         redisTemplate.boundHashOps("payLog").delete(tbPayLog.getUserId());
+    }
+
+    @Override
+    public void recoverRedisCartList(String userId, String out_trade_no) {
+        Long[] orderIds=null;
+        List<TbOrderItem> orderItemList=null;
+        String sellerId=null;
+        List<Cart> cartList = new ArrayList<>();
+        TbPayLog payLog = new TbPayLog();
+        payLog.setOutTradeNo(out_trade_no);
+        List<TbPayLog> tbPayLogList = tbPayLogMapper.select(payLog);
+        if(tbPayLogList!=null) {
+            for (TbPayLog tbPayLog : tbPayLogList) {
+                Cart cart= new Cart();
+                String orderList = tbPayLog.getOrderList();//"23,32"
+                String[] strArray = orderList.split(",");//"[23,32]"
+                 orderIds = (Long[]) ConvertUtils.convert(strArray,Long.class);
+                if(orderIds!=null) {
+                    for (Long orderId : orderIds) {
+                        //设置orderItemList
+                        TbOrderItem tbOrderItem = new TbOrderItem();
+                        tbOrderItem.setOrderId(orderId);
+                        orderItemList = tbOrderItemMapper.select(tbOrderItem);
+                        cart.setOrderItemList(orderItemList);
+
+                        TbOrder tbOrder = orderMapper.selectByPrimaryKey(orderId);
+                        for (TbOrderItem orderItem : orderItemList) {
+                            sellerId = orderItem.getSellerId();
+                            cart.setSellerId(sellerId);
+                        }
+                        TbSeller tbSeller = new TbSeller();
+                        tbSeller.setSellerId(sellerId);
+                        List<TbSeller> tbSellerList = sellerMapper.select(tbSeller);
+                        if(tbSellerList!=null) {
+                            for (TbSeller seller : tbSellerList) {
+                                //店铺名称
+                                String nickName = seller.getNickName();
+                                cart.setSellerName(nickName);
+                            }
+                        }
+
+                    }
+                }
+                cartList.add(cart);
+            }
+        }
+        redisTemplate.boundHashOps("REDIS_CARTLIST").put(userId,cartList);
+        //删除订单表数据，删除订单明细表数据,支付日志表
+        for (Long orderId : orderIds) {
+            orderMapper.deleteByPrimaryKey(orderId);
+        }
+        for (TbOrderItem tbOrderItem : orderItemList) {
+            tbOrderItemMapper.delete(tbOrderItem);
+        }
+        TbPayLog tbPayLog = new TbPayLog();
+        tbPayLog.setOutTradeNo(out_trade_no);
+        tbPayLogMapper.delete(tbPayLog);
+
+        throw new RuntimeException("超时");
     }
 
 

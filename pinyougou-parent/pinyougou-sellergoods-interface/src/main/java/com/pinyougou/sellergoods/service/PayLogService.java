@@ -28,5 +28,6 @@ public interface PayLogService extends CoreService<TbPayLog> {
 	 * @return
 	 */
 	PageInfo<TbPayLog> findPage(Integer pageNo,Integer pageSize,TbPayLog PayLog);
-	
+
+
 }
