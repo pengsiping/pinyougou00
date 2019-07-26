@@ -8,7 +8,11 @@
         ids: [],
         searchEntity: {},
         contentList: [],
-        keyword: ''
+        keyword: '',
+        itemCat:{itemCatList:[]},
+        itemCat1:{itemCatList1:[{'name':'分类'},{'name':'精品'}]},
+        flag:''
+
     }
     ,
     methods: {
@@ -104,7 +108,17 @@
         },
         doSearch:function(){
             window.location.href="http://localhost:9104/search.html?keyword="+encodeURIComponent(this.keyword);
-        }
+        },
+        findParentId: function (parentId) {
+            axios.get('/itemCat/findItemList/' + parentId + '.shtml').then(function (response) {
+                app.itemCat.itemCatList = response.data;
+                app.entity.parentId=parentId;
+                console.log(app.itemCat)
+
+            }).catch(function (error) {
+                console.log("1231312131321");
+            });
+        },
 
 
 
@@ -113,6 +127,7 @@
     created: function () {
       
         this.findAllCategory(1);
+        this.findParentId(0);
     }
 
 })
