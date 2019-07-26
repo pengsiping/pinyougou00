@@ -1,28 +1,26 @@
 package com.pinyougou.user.service.impl;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-
-import com.pinyougou.service.UserService;
-import org.apache.rocketmq.client.exception.MQBrokerException;
-import org.apache.rocketmq.client.exception.MQClientException;
-import org.apache.rocketmq.client.producer.DefaultMQProducer;
-import org.apache.rocketmq.client.producer.SendResult;
-import org.apache.rocketmq.common.message.Message;
-import org.apache.rocketmq.remoting.exception.RemotingException;
-import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo; 									  
-import org.apache.commons.lang3.StringUtils;
+import com.github.pagehelper.PageInfo;
 import com.pinyougou.core.service.CoreServiceImpl;
-
+import com.pinyougou.mapper.TbUserMapper;
+import com.pinyougou.pojo.TbUser;
+import com.pinyougou.service.UserService;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.rocketmq.client.producer.DefaultMQProducer;
+import org.apache.rocketmq.client.producer.SendResult;
+import org.apache.rocketmq.common.message.Message;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import tk.mybatis.mapper.entity.Example;
 
-import com.pinyougou.mapper.TbUserMapper;
-import com.pinyougou.pojo.TbUser;  
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 
 
@@ -34,7 +32,6 @@ import com.pinyougou.pojo.TbUser;
  */
 @Service
 public class UserServiceImpl extends CoreServiceImpl<TbUser>  implements UserService {
-
 	
 	private TbUserMapper userMapper;
 
@@ -50,15 +47,11 @@ public class UserServiceImpl extends CoreServiceImpl<TbUser>  implements UserSer
 	@Value("${TemplateCode}")
 	private String TemplateCode;
 
-
-
 	@Autowired
 	public UserServiceImpl(TbUserMapper userMapper) {
 		super(userMapper, TbUser.class);
 		this.userMapper=userMapper;
 	}
-
-
 
 
 	@Override
@@ -72,9 +65,6 @@ public class UserServiceImpl extends CoreServiceImpl<TbUser>  implements UserSer
         PageInfo<TbUser> pageInfo = JSON.parseObject(s, PageInfo.class);
         return pageInfo;
     }
-
-	
-	
 
 	 @Override
     public PageInfo<TbUser> findPage(Integer pageNo, Integer pageSize, TbUser user) {
@@ -188,4 +178,13 @@ public class UserServiceImpl extends CoreServiceImpl<TbUser>  implements UserSer
 		return true;
 	}
 
+	@Override
+	public void delete(Object[] ids) {
+		Example example = new Example(TbUser.class);
+		Example.Criteria criteria = example.createCriteria();
+		criteria.andIn("id", Arrays.asList(ids));
+		TbUser user= new TbUser();
+		user.setStatus("N");
+		userMapper.updateByExampleSelective(user, example);
+	}
 }
