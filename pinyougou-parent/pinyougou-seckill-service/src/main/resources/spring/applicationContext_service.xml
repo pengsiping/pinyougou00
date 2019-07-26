@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+
+    <!--组件扫描-->
+    <!--任务驱动 使用任务执行管理器-->
+    <task:annotation-driven executor="taskExecutor"></task:annotation-driven>
+    <!--线程池-->
+    <bean class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor" id="taskExecutor">
+        <!--初始化线程数量-->
+        <property name="corePoolSize" value="10"></property>
+        <!--最大线程数量-->
+        <property name="maxPoolSize" value="20"></property>
+        <!--队列最大容量-->
+        <property name="queueCapacity" value="200"></property>
+        <!--线程的最大空闲时间 秒-->
+        <property name="keepAliveSeconds" value="30"></property>
+        <!--设置拒绝访问策略-->
+        <property name="rejectedExecutionHandler">
+            <bean class="java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy"></bean>
+        </property>
+
+    </bean>
+
+    <bean class="com.pinyougou.seckill.thread.CreateOrderThread"></bean>
+
+    <!--配置dubbo的配置顶-->
+    <dubbo:application name="pinyougou_seckill_service"></dubbo:application>
+    <dubbo:registry protocol="zookeeper" address="192.168.25.133" port="2181"></dubbo:registry>
+    <dubbo:protocol name="dubbo" port="20888"></dubbo:protocol>
+    <!--组件扫描-->
+    <dubbo:annotation package="com.pinyougou.seckill.service"></dubbo:annotation>
+    <dubbo:provider timeout="100000"></dubbo:provider>
+
+    <bean class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer" id="freeMarkerConfigurer">
+        <property name="defaultEncoding" value="utf-8"></property>
+        <property name="templateLoaderPath" value="/WEB-INF/ftl"></property>
+    </bean>
+
+    <bean class="com.pinyougou.IdWorker">
+        <constructor-arg name="workerId" value="0"></constructor-arg>
+        <constructor-arg name="datacenterId" value="0"></constructor-arg>
+    </bean>
+
+
+</beans>
