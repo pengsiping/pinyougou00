@@ -8,7 +8,11 @@
         ids: [],
         searchEntity: {},
         contentList: [],
-        keyword: ''
+        keyword: '',
+        itemCat:{itemCatList:[]},
+        itemCat1:{itemCatList1:[{'name':'分类'},{'name':'精品'}]},
+        flag:''
+
     }
     ,
     methods: {
@@ -104,8 +108,10 @@
         },
         doSearch:function(){
             window.location.href="http://localhost:9104/search.html?keyword="+encodeURIComponent(this.keyword);
+        },
+        analyse:function () {
+            axios.get('/analyse/user');
         }
-
 
 
     },
@@ -113,6 +119,7 @@
     created: function () {
       
         this.findAllCategory(1);
+        this.analyse();
     }
 
 })

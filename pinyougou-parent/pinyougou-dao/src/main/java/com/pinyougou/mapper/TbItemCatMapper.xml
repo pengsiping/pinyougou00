@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.pinyougou.mapper.TbItemCatMapper" >
-  <resultMap id="BaseResultMap" type="com.pinyougou.pojo.TbItemCat" >
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" property="id" jdbcType="BIGINT" />
-    <result column="parent_id" property="parentId" jdbcType="BIGINT" />
-    <result column="name" property="name" jdbcType="VARCHAR" />
-    <result column="type_id" property="typeId" jdbcType="BIGINT" />
-  </resultMap>
+<mapper namespace="com.pinyougou.mapper.TbItemCatMapper">
+
+    <resultMap id="BaseResultMap" type="com.pinyougou.pojo.TbItemCat">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="parent_id" property="parentId" jdbcType="BIGINT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="type_id" property="typeId" jdbcType="BIGINT"/>
+
+
+    </resultMap>
+    <!--查找分类-->
+
+    <select id="selectItemCatList" resultType="com.pinyougou.pojo.TbItemCat">
+        select * from tb_item_cat where parent_id=#{parentId} limit 0,15
+    </select>
 </mapper>

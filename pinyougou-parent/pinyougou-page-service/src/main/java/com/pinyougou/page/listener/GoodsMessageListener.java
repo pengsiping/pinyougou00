@@ -72,7 +72,8 @@ public class GoodsMessageListener implements MessageListenerConcurrently {
     }
 
     private void updatePageHtml(MessageInfo messageInfo) {
-        String context = (String) messageInfo.getContext();
+        //String context = (String) messageInfo.getContext();  错误
+        String context = messageInfo.getContext().toString();
 
         List<TbItem> tbItems = JSON.parseArray(context, TbItem.class);
         for (TbItem tbItem : tbItems) {
