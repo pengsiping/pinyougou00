@@ -109,17 +109,9 @@
         doSearch:function(){
             window.location.href="http://localhost:9104/search.html?keyword="+encodeURIComponent(this.keyword);
         },
-        findParentId: function (parentId) {
-            axios.get('/itemCat/findItemList/' + parentId + '.shtml').then(function (response) {
-                app.itemCat.itemCatList = response.data;
-                app.entity.parentId=parentId;
-                console.log(app.itemCat)
-
-            }).catch(function (error) {
-                console.log("1231312131321");
-            });
-        },
-
+        analyse:function () {
+            axios.get('/analyse/user');
+        }
 
 
     },
@@ -127,7 +119,7 @@
     created: function () {
       
         this.findAllCategory(1);
-        this.findParentId(0);
+        this.analyse();
     }
 
 })
