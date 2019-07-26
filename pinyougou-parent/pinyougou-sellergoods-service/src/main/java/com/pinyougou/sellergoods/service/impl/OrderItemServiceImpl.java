@@ -1,5 +1,4 @@
 package com.pinyougou.sellergoods.service.impl;
-import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.dubbo.config.annotation.Service;
@@ -83,6 +82,13 @@ public class OrderItemServiceImpl extends CoreServiceImpl<TbOrderItem>  implemen
         PageInfo<TbOrderItem> pageInfo = JSON.parseObject(s, PageInfo.class);
 
         return pageInfo;
+    }
+
+    @Override
+    public List<TbOrderItem> findAllSales() {
+
+       List<TbOrderItem> list = orderItemMapper.findAllSales();
+       return list;
     }
 
 

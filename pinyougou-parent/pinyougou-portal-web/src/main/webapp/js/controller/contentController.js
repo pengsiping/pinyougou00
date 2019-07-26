@@ -8,7 +8,11 @@
         ids: [],
         searchEntity: {},
         contentList: [],
-        keyword: ''
+        keyword: '',
+        itemCat:{itemCatList:[]},
+        itemCat1:{itemCatList1:[{'name':'分类'},{'name':'精品'}]},
+        flag:''
+
     }
     ,
     methods: {

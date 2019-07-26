@@ -31,4 +31,8 @@
     <result column="source_type" property="sourceType" jdbcType="VARCHAR" />
     <result column="seller_id" property="sellerId" jdbcType="VARCHAR" />
   </resultMap>
+  <select id="getSalesLineChart" parameterType="String" resultType="java.math.BigDecimal" >
+     select sum(payment) from tb_order where SUBSTRING(payment_time,1,10) = #{day} and status = #{status}
+    </select>
+
 </mapper>

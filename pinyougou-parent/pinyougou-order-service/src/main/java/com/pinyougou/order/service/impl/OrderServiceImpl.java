@@ -9,9 +9,7 @@ import com.pinyougou.core.service.CoreServiceImpl;
 import com.pinyougou.mapper.*;
 import com.pinyougou.order.service.OrderService;
 import com.pinyougou.pojo.*;
-import com.sun.tools.javac.main.Main;
 import entity.Cart;
-import entity.Result;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -35,6 +33,12 @@ public class OrderServiceImpl extends CoreServiceImpl<TbOrder> implements OrderS
     private TbOrderMapper orderMapper;
 
     @Autowired
+    public OrderServiceImpl(TbOrderMapper orderMapper) {
+        super(orderMapper, TbOrder.class);
+        this.orderMapper = orderMapper;
+    }
+
+    @Autowired
     private RedisTemplate redisTemplate;
 
     @Autowired
@@ -51,11 +55,8 @@ public class OrderServiceImpl extends CoreServiceImpl<TbOrder> implements OrderS
     @Autowired
     private TbSellerMapper sellerMapper;
 
-    @Autowired
-    public OrderServiceImpl(TbOrderMapper orderMapper) {
-        super(orderMapper, TbOrder.class);
-        this.orderMapper = orderMapper;
-    }
+
+
 
 
     @Override
@@ -151,8 +152,7 @@ public class OrderServiceImpl extends CoreServiceImpl<TbOrder> implements OrderS
 
         return pageInfo;
     }
-
-    /**
+    /*
      * 获取日志信息
      * @param userId
      * @return
@@ -165,8 +165,6 @@ public class OrderServiceImpl extends CoreServiceImpl<TbOrder> implements OrderS
     }
 
 
-    @Autowired
-    private TbOrderMapper tbOrderMapper;
 
     //更新交易日志信息
     @Override
@@ -181,7 +179,7 @@ public class OrderServiceImpl extends CoreServiceImpl<TbOrder> implements OrderS
         String orderList = tbPayLog.getOrderList();
         String[] orderIds = orderList.split(",");
         for (String orderId : orderIds) {
-            TbOrder order = tbOrderMapper.selectByPrimaryKey(Long.parseLong(orderId));
+            TbOrder order = orderMapper.selectByPrimaryKey(Long.parseLong(orderId));
             if(order!=null){
                 order.setStatus("2");
                 order.setUpdateTime(new Date());
@@ -189,7 +187,7 @@ public class OrderServiceImpl extends CoreServiceImpl<TbOrder> implements OrderS
                 System.out.println(order.getUpdateTime()+"===="+order.getPaymentTime());
                 order.setPaymentTime(order.getUpdateTime());
                 //更新订单信息
-                tbOrderMapper.updateByPrimaryKey(order);
+                orderMapper.updateByPrimaryKey(order);
             }
 
         }
@@ -254,6 +252,19 @@ public class OrderServiceImpl extends CoreServiceImpl<TbOrder> implements OrderS
 
         throw new RuntimeException("超时");
     }
+
+    @Override
+    public List<BigDecimal> getSalesLineChart(List<String> daysList) {
+        String status= "1";
+        List<BigDecimal> moneyList = new ArrayList<>();
+        for (String day : daysList) {
+          BigDecimal  dayMoney = orderMapper.getSalesLineChart(day,status);
+          moneyList.add(dayMoney);
+        }
+        return moneyList;
+    }
+
+
 
 
     @Override
