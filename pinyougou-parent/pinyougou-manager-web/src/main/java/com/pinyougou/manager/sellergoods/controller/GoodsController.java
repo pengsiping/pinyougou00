@@ -1,22 +1,27 @@
 package com.pinyougou.manager.sellergoods.controller;
-import java.util.List;
 
+import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.fastjson.JSON;
+import com.github.pagehelper.PageInfo;
 import com.pinyougou.MessageInfo;
+import com.pinyougou.POIUtils;
+import com.pinyougou.pojo.TbGoods;
 import com.pinyougou.pojo.TbItem;
+import com.pinyougou.sellergoods.service.GoodsService;
 import com.pinyougou.sellergoods.service.ItemService;
 import entity.Goods;
+import entity.Result;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.common.message.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import com.alibaba.dubbo.config.annotation.Reference;
-import com.pinyougou.pojo.TbGoods;
-import com.pinyougou.sellergoods.service.GoodsService;
 
-import com.github.pagehelper.PageInfo;
-import entity.Result;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.List;
 /**
  * controller
  * @author Administrator
@@ -42,7 +47,31 @@ public class GoodsController {
 
 	@Autowired
 	private DefaultMQProducer producer;
-	
+
+	@RequestMapping("/goodsExport")
+	public void goodsExport(HttpServletResponse response){
+		ServletOutputStream outputStream = null;
+		try {
+			List<TbGoods> users = goodsService.findAll();
+			ByteArrayOutputStream stream = POIUtils.exportExcel(users);
+			byte[] body = stream.toByteArray();
+			response.setContentType("applicatoin/octet-stream"); // 设置下载类型
+			response.setHeader("Content-Disposition","attachment; filename=goods.xlsx"); // 设置文件的名称
+			outputStream = response.getOutputStream();
+			outputStream.write(body);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (outputStream != null) {
+					outputStream.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 	/**
 	 * 返回全部列表
 	 * @return
