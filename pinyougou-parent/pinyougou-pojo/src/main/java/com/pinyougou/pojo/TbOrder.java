@@ -3,6 +3,7 @@ package com.pinyougou.pojo;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.*;
 
 @Table(name = "tb_order")
@@ -157,8 +158,21 @@ public class TbOrder implements Serializable {
      */
     @Column(name = "seller_id")
     private String sellerId;
+    /**
+     * 一个订单有多个订单明细
+     */
+    @Transient
+    List<TbOrderItem> orderItemList;
 
     private static final long serialVersionUID = 1L;
+
+    public List<TbOrderItem> getOrderItemList() {
+        return orderItemList;
+    }
+
+    public void setOrderItemList(List<TbOrderItem> orderItemList) {
+        this.orderItemList = orderItemList;
+    }
 
     /**
      * 获取订单id

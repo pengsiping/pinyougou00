@@ -16,8 +16,4 @@
     <result column="pic_path" property="picPath" jdbcType="VARCHAR" />
     <result column="seller_id" property="sellerId" jdbcType="VARCHAR" />
   </resultMap>
-  <select id="findAllSales" resultType="java.util.List">
-    select tb_order_item
-  </select>
-
 </mapper>

@@ -30,6 +30,6 @@ public interface OrderItemService extends CoreService<TbOrderItem> {
 	PageInfo<TbOrderItem> findPage(Integer pageNo,Integer pageSize,TbOrderItem OrderItem);
 
 
-    List<TbOrderItem> findAllSales();
+
 
 }

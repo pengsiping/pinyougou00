@@ -264,8 +264,17 @@ public class OrderServiceImpl extends CoreServiceImpl<TbOrder> implements OrderS
         return moneyList;
     }
 
+    @Override
+    public List<TbOrder> findAllSales() {
+       List<TbOrder> list =  orderMapper.findAllSales();
+       return list;
+    }
 
-
+    @Override
+    public List<TbOrder> findAllSales(String startTime, String endTime) {
+        List<TbOrder> list =  orderMapper.findOnTimeSales(startTime,endTime);
+        return list;
+    }
 
     @Override
     public void add(TbOrder record) {
