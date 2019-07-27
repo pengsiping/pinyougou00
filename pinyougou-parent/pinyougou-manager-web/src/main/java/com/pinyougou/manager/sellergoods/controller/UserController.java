@@ -2,11 +2,15 @@ package com.pinyougou.manager.sellergoods.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.github.pagehelper.PageInfo;
+import com.pinyougou.POIUtils;
 import com.pinyougou.pojo.TbUser;
 import com.pinyougou.service.UserService;
 import entity.Result;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.util.List;
 
 /**
@@ -20,6 +24,31 @@ public class UserController {
 
     @Reference
     private UserService userService;
+
+    @RequestMapping("/userExport")
+    public void userExport(HttpServletResponse response){
+        ServletOutputStream outputStream = null;
+        try {
+            List<TbUser> users = userService.findAll();
+            ByteArrayOutputStream stream = POIUtils.exportExcel(users);
+            byte[] body = stream.toByteArray();
+            response.setContentType("applicatoin/octet-stream"); // 设置下载类型
+            response.setHeader("Content-Disposition","attachment; filename=user.xlsx"); // 设置文件的名称
+            outputStream = response.getOutputStream();
+            outputStream.write(body);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (outputStream != null) {
+                    outputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     /**
      * 返回全部列表

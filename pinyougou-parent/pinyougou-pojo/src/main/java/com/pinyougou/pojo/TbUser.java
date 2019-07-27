@@ -1,12 +1,12 @@
 package com.pinyougou.pojo;
 
-import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import java.io.Serializable;
-import java.util.Date;
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
+import java.io.Serializable;
+import java.util.Date;
 
 @Table(name = "tb_user")
 public class TbUser implements Serializable {
@@ -50,10 +50,12 @@ public class TbUser implements Serializable {
      */
 
     @Column(name = "created")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date created;
 
 
     @Column(name = "updated")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date updated;
 
     /**
