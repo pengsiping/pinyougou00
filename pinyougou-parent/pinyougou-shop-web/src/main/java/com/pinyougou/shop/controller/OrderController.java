@@ -35,8 +35,8 @@ public class OrderController {
 	@RequestMapping("/findPage")
     public PageInfo<TbOrder> findPage(@RequestParam(value = "pageNo", defaultValue = "1", required = true) Integer pageNo,
 									  @RequestParam(value = "pageSize", defaultValue = "10", required = true) Integer pageSize) {
-        return orderService.findPage(pageNo, pageSize);
-    }
+		return orderService.findPage(pageNo, pageSize);
+	}
 	
 	/**
 	 * 增加

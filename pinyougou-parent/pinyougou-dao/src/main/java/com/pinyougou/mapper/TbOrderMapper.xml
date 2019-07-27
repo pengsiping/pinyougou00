@@ -31,14 +31,14 @@
         <result column="source_type" property="sourceType" jdbcType="VARCHAR"/>
         <result column="seller_id" property="sellerId" jdbcType="VARCHAR"/>
         <collection property="orderItemList" ofType="com.pinyougou.pojo.TbOrderItem">
-        <result column="id" property="id"></result>
+        <result column="iid" property="id"></result>
         <result column="goods_id" property="goodsId"></result>
         <result column="order_id" property="orderId"></result>
         <result column="total_fee" property="totalFee"></result>
             <association property="tbGoods" javaType="com.pinyougou.pojo.TbGoods">
-                <id column="id" property="id"></id>
+                <id column="gid" property="id"></id>
                 <result column="goods_name" property="goodsName"></result>
-                <result column="seller_id" property="sellerId"></result>
+                <result column="gseller_id" property="sellerId"></result>
             </association>
         </collection>
     </resultMap>
@@ -46,13 +46,15 @@
      select sum(payment) from tb_order where SUBSTRING(payment_time,1,10) = #{day} and status = #{status}
     </select>
   <select id="findAllSales" resultMap="BaseResultMap">
-   select o.*,i.id,i.goods_id,i.order_id,i.total_fee,g.id,g.seller_id,g.goods_name from tb_order o ,tb_order_item
+   select o.*,i.id iid,i.goods_id,i.order_id,i.total_fee,g.id gid,g.seller_id gseller_id,g.goods_name from tb_order o ,
+   tb_order_item
     i, tb_goods g where o.order_id = i.order_id
     and
    i.goods_id = g.id group by i.goods_id
   </select>
     <select id="findOnTimeSales" parameterType="java.lang.String" resultMap="BaseResultMap">
-   select o.*,i.id,i.goods_id,i.order_id,i.total_fee,g.id,g.seller_id,g.goods_name from tb_order o ,tb_order_item
+   select o.*,i.id iid,i.goods_id,i.order_id,i.total_fee,g.id gid,g.seller_id gseller_id,g.goods_name from tb_order o
+   ,tb_order_item
     i, tb_goods g where
      o.payment_time between #{startTime} and #{endTime}
      and

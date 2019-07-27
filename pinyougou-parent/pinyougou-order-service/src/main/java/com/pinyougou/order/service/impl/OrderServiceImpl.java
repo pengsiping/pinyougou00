@@ -66,9 +66,9 @@ public class OrderServiceImpl extends CoreServiceImpl<TbOrder> implements OrderS
         PageInfo<TbOrder> info = new PageInfo<TbOrder>(all);
 
         //序列化再反序列化
-        String s = JSON.toJSONString(info);
-        PageInfo<TbOrder> pageInfo = JSON.parseObject(s, PageInfo.class);
-        return pageInfo;
+//        String s = JSON.toJSONString(info);
+//        PageInfo<TbOrder> pageInfo = JSON.parseObject(s, PageInfo.class);
+        return info;
     }
 
 
@@ -146,11 +146,11 @@ public class OrderServiceImpl extends CoreServiceImpl<TbOrder> implements OrderS
         }
         List<TbOrder> all = orderMapper.selectByExample(example);
         PageInfo<TbOrder> info = new PageInfo<TbOrder>(all);
-        //序列化再反序列化
-        String s = JSON.toJSONString(info);
-        PageInfo<TbOrder> pageInfo = JSON.parseObject(s, PageInfo.class);
+//        //序列化再反序列化
+//        String s = JSON.toJSONString(info);
+//        PageInfo<TbOrder> pageInfo = JSON.parseObject(s, PageInfo.class);
 
-        return pageInfo;
+        return info;
     }
     /*
      * 获取日志信息
