@@ -15,12 +15,12 @@ import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.common.message.Message;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.List;
 /**
  * controller
@@ -49,26 +49,17 @@ public class GoodsController {
 	private DefaultMQProducer producer;
 
 	@RequestMapping("/goodsExport")
-	public void goodsExport(HttpServletResponse response){
-		ServletOutputStream outputStream = null;
+	public ResponseEntity<byte[]> goodsExport(){
 		try {
-			List<TbGoods> users = goodsService.findAll();
-			ByteArrayOutputStream stream = POIUtils.exportExcel(users);
-			byte[] body = stream.toByteArray();
-			response.setContentType("applicatoin/octet-stream"); // 设置下载类型
-			response.setHeader("Content-Disposition","attachment; filename=goods.xlsx"); // 设置文件的名称
-			outputStream = response.getOutputStream();
-			outputStream.write(body);
+			List<TbItem> users = itemService.findAll();
+			byte[] body = POIUtils.exportExcel(users).toByteArray();
+			HttpHeaders headers = new HttpHeaders();
+			headers.add("Content-Disposition", "attachment; filename=item.xlsx");
+			headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+			return new ResponseEntity<byte[]>(body, headers, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			try {
-				if (outputStream != null) {
-					outputStream.close();
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
 		}
 	}
 

@@ -33,6 +33,9 @@
                         <button type="button" class="btn btn-default" title="新建" data-toggle="modal"
                                 data-target="#editModal" @click="entity={}"><i class="fa fa-file-o"></i> 新建
                         </button>
+                        <button type="button" class="btn btn-default" title="批量导入" data-toggle="modal"
+                                data-target="#importModal"><i class="fa fa-file-o"></i> 批量导入
+                        </button>
                         <button type="button" class="btn btn-default" title="删除" @click="dele()"><i class="fa fa-trash-o"></i> 删除
                         </button>
                         <button type="button" class="btn btn-default" title="刷新" onclick="window.location.reload();"><i
@@ -119,10 +122,38 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="importModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 id="importModalLabel">品牌批量导入</h3>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered table-striped" width="800px">
+                        <tr>
+                            <td>模板文件下载</td>
+                            <td><a href="/brand/template.shtml" download>模板文件</a></td>
+                        </tr>
+                        <tr>
+                            <td>数据文件</td>
+                            <td><input type="file" id="file" name="file" value="文件选择"></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" @click="upload()">导入</button>
+                    <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 <script src="../plugins/vue/vue.js"></script>
 <script src="../plugins/axios/axios.js"></script>
-<script src="../js/controller/brandController.js"></script>
 <script src="../js/pagination.js"></script>
+<script src="../js/controller/brandController.js"></script>
 </html>

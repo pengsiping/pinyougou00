@@ -7,12 +7,13 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,13 +25,25 @@ public class POIUtils {
     private final static String DATE_FORMAT = "yyyy/MM/dd";
 
     /**
-     * excel导出
+     * excel导出 默认输出全部字段
      *
-     * @param list      数据集合
+     * @param list 数据集合
      * @return 输出
      * @throws Exception 错误
      */
     public static <T> ByteArrayOutputStream exportExcel(List<T> list) throws Exception {
+        return exportExcel(list, new String[]{"SerialVersionUID"});
+    }
+
+    /**
+     * excel导出
+     *
+     * @param list         数据集合
+     * @param delFieldName 需要排除的字段
+     * @return 输出
+     * @throws Exception 错误
+     */
+    public static <T> ByteArrayOutputStream exportExcel(List<T> list, String[] delFieldName) throws Exception {
 
         XSSFWorkbook wb = new XSSFWorkbook();
 
@@ -39,31 +52,50 @@ public class POIUtils {
             throw new RuntimeException("List must to have value");
         }
         Class<?> clazz = t.getClass();
-        Field[] fields = clazz.getDeclaredFields();
 
+        Field[] fields = clazz.getDeclaredFields();
+        List<Integer> delFieldList = new ArrayList<>();
+        //设置排除的字段
+        if (delFieldName != null && delFieldName.length > 0) {
+            for (String del : delFieldName) {
+                for (int i = 0; i < fields.length; i++) {
+                    if (fields[i].getName().equalsIgnoreCase(del)) {
+                        delFieldList.add(i);
+                    }
+                }
+            }
+        }
         XSSFSheet sheet = wb.createSheet(clazz.getName());//用类的名字
         // 设置表头的说明
         XSSFRow topRow = sheet.createRow(0);
+        title:
         for (int i = 0; i < fields.length; i++) {
+            for (Integer del : delFieldList) {
+                if (del.equals(i)) break title;
+            }
             setCellType(topRow.createCell(i), fields[i].getName());
         }
 
         String methodName;
         Method method = null;
-
-        Object ret = null;
+        Object ret;
         // 遍历生成数据行，通过反射获取字段的get方法
         for (int i = 0; i < list.size(); i++) {
             t = list.get(i);
             XSSFRow row = sheet.createRow(i + 1);
+            cell:
             for (int j = 0; j < fields.length; j++) {
-                if("serialVersionUID".equals(fields[j].getName()))break;
+                for (Integer del : delFieldList) {
+                    if (del.equals(j)) continue cell;
+                }
+
                 methodName = "get" + capitalize(fields[j].getName());
                 try {
                     method = clazz.getDeclaredMethod(methodName);
                 } catch (java.lang.NoSuchMethodException e) {    //	不存在该方法，查看父类是否存在。此处只支持一级父类，若想支持更多，建议使用while循环
                     if (null != clazz.getSuperclass()) {
                         method = clazz.getSuperclass().getDeclaredMethod(methodName);
+
                     }
                 }
                 if (null == method) {
@@ -73,7 +105,7 @@ public class POIUtils {
                 /*if (fields[i].getType().getName().equals("java.util.Date")) {
                     ret = new SimpleDateFormat(DATE_FORMAT).format(ret);
                 }*/
-                if (ret==null) ret="";
+                if (ret == null) ret = "";
                 setCellType(row.createCell(j), ret + "");
             }
         }
@@ -91,16 +123,21 @@ public class POIUtils {
     /**
      * 读入excel文件，解析后返回
      *
-     * @param file
-     * @throws IOException
+     * @param file     文件流
+     * @param fileName 文件名
+     * @param clazz    输出类型
+     * @param <T>      由class决定
+     * @return 集合
+     * @throws Exception 问题
      */
-    public static List<String[]> readExcel(MultipartFile file) throws IOException {
+    public static <T> List<T> readExcel(InputStream file, String fileName, Class<T> clazz) throws Exception {
         //检查文件
-        checkFile(file);
+        checkFile(file, fileName);
         //获得Workbook工作薄对象
-        Workbook workbook = getWorkBook(file);
+        Workbook workbook = getWorkBook(file, fileName);
         //创建返回对象，把每行中的值作为一个数组，所有行作为一个集合返回
-        List<String[]> list = new ArrayList<String[]>();
+        List<T> list = new ArrayList<>();
+        Field[] fields = clazz.getDeclaredFields();
         if (workbook != null) {
             for (int sheetNum = 0; sheetNum < workbook.getNumberOfSheets(); sheetNum++) {
                 //获得当前sheet工作表
@@ -112,6 +149,9 @@ public class POIUtils {
                 int firstRowNum = sheet.getFirstRowNum();
                 //获得当前sheet的结束行
                 int lastRowNum = sheet.getLastRowNum();
+                // 获得表头总列数
+                int cols = sheet.getRow(0).getPhysicalNumberOfCells();
+
                 //循环除了第一行的所有行
                 for (int rowNum = firstRowNum + 1; rowNum <= lastRowNum; rowNum++) {
                     //获得当前行
@@ -119,17 +159,29 @@ public class POIUtils {
                     if (row == null) {
                         continue;
                     }
-                    //获得当前行的开始列
-                    int firstCellNum = row.getFirstCellNum();
-                    //获得当前行的列数
-                    int lastCellNum = row.getPhysicalNumberOfCells();
-                    String[] cells = new String[row.getPhysicalNumberOfCells()];
-                    //循环当前行
-                    for (int cellNum = firstCellNum; cellNum < lastCellNum; cellNum++) {
-                        Cell cell = row.getCell(cellNum);
-                        cells[cellNum] = getCellValue(cell);
+                    T t = clazz.newInstance();
+                    // 遍历该行所有列
+                    for (int j = 0; j < cols; j++) {
+                        Object value = null;
+                        Cell cell = row.getCell(j);
+                        if (null == cell) continue;    // 为空时，下一列
+                        Object cellValue = getCellValue(cell);
+                        if(cellValue==null||cellValue=="")continue;
+                        String methodName = "set" + capitalize(fields[j].getName());
+                        Method method = null;
+                        try {
+                            method = clazz.getDeclaredMethod(methodName,fields[j].getType());
+                        } catch (NoSuchMethodException e) {    //	不存在该方法，查看父类是否存在。此处只支持一级父类，若想支持更多，建议使用while循环
+                            if (null != clazz.getSuperclass()) {
+                                method = clazz.getSuperclass().getDeclaredMethod(methodName);
+                            }
+                        }
+                        if (null == method) {
+                            throw new Exception(clazz.getName() + " don't have method --> " + methodName);
+                        }
+                        method.invoke(t, cellValue);
                     }
-                    list.add(cells);
+                    list.add(t);
                 }
             }
             workbook.close();
@@ -138,34 +190,28 @@ public class POIUtils {
     }
 
     //校验文件是否合法
-    private static void checkFile(MultipartFile file) throws IOException {
+    private static void checkFile(InputStream file, String fileName) throws IOException {
         //判断文件是否存在
         if (null == file) {
             throw new FileNotFoundException("文件不存在！");
         }
-        //获得文件名
-        String fileName = file.getOriginalFilename();
         //判断文件是否是excel文件
         if (!fileName.endsWith(xls) && !fileName.endsWith(xlsx)) {
             throw new IOException(fileName + "不是excel文件");
         }
     }
 
-    private static Workbook getWorkBook(MultipartFile file) {
-        //获得文件名
-        String fileName = file.getOriginalFilename();
+    private static Workbook getWorkBook(InputStream file, String fileName) {
         //创建Workbook工作薄对象，表示整个excel
         Workbook workbook = null;
         try {
-            //获取excel文件的io流
-            InputStream is = file.getInputStream();
             //根据文件后缀名不同(xls和xlsx)获得不同的Workbook实现类对象
             if (fileName.endsWith(xls)) {
                 //2003
-                workbook = new HSSFWorkbook(is);
+                workbook = new HSSFWorkbook(file);
             } else if (fileName.endsWith(xlsx)) {
                 //2007
-                workbook = new XSSFWorkbook(is);
+                workbook = new XSSFWorkbook(file);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -173,39 +219,38 @@ public class POIUtils {
         return workbook;
     }
 
-    private static String getCellValue(Cell cell) {
-        String cellValue = "";
+    private static Object getCellValue(Cell cell) throws Exception {
         if (cell == null) {
-            return cellValue;
+            return null;
         }
+        Object cellValue;
         //如果当前单元格内容为日期类型，需要特殊处理
         String dataFormatString = cell.getCellStyle().getDataFormatString();
         if (dataFormatString.equals("m/d/yy")) {
-            cellValue = new SimpleDateFormat(DATE_FORMAT).format(cell.getDateCellValue());
+            cellValue = cell.getDateCellValue();
             return cellValue;
         }
-        //把数字当成String来读，避免出现1读成1.0的情况
-        if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
-            cell.setCellType(Cell.CELL_TYPE_STRING);
-        }
         //判断数据的类型
-        switch (cell.getCellType()) {
-            case Cell.CELL_TYPE_NUMERIC: //数字
-                cellValue = String.valueOf(cell.getNumericCellValue());
+        switch (cell.getCellTypeEnum()) {
+            case NUMERIC: //数字
+                cellValue = cell.getNumericCellValue();
+                if (cell.getCellStyle().getDataFormat() > 0) {
+                    cellValue = cell.getDateCellValue();
+                }
                 break;
-            case Cell.CELL_TYPE_STRING: //字符串
-                cellValue = String.valueOf(cell.getStringCellValue());
+            case STRING: //字符串
+                cellValue = cell.getStringCellValue();
                 break;
-            case Cell.CELL_TYPE_BOOLEAN: //Boolean
-                cellValue = String.valueOf(cell.getBooleanCellValue());
+            case BOOLEAN: //Boolean
+                cellValue = cell.getBooleanCellValue();
                 break;
-            case Cell.CELL_TYPE_FORMULA: //公式
-                cellValue = String.valueOf(cell.getCellFormula());
+            case FORMULA: //公式
+                cellValue = cell.getCellFormula();
                 break;
-            case Cell.CELL_TYPE_BLANK: //空值
-                cellValue = "";
+            case BLANK: //空值
+                cellValue = null;
                 break;
-            case Cell.CELL_TYPE_ERROR: //故障
+            case ERROR: //故障
                 cellValue = "非法字符";
                 break;
             default:

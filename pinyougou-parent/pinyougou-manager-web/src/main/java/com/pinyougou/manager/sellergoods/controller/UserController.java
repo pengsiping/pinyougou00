@@ -6,11 +6,12 @@ import com.pinyougou.POIUtils;
 import com.pinyougou.pojo.TbUser;
 import com.pinyougou.service.UserService;
 import entity.Result;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-import java.io.*;
 import java.util.List;
 
 /**
@@ -26,26 +27,17 @@ public class UserController {
     private UserService userService;
 
     @RequestMapping("/userExport")
-    public void userExport(HttpServletResponse response){
-        ServletOutputStream outputStream = null;
+    public ResponseEntity<byte[]> userExport() {
         try {
             List<TbUser> users = userService.findAll();
-            ByteArrayOutputStream stream = POIUtils.exportExcel(users);
-            byte[] body = stream.toByteArray();
-            response.setContentType("applicatoin/octet-stream"); // 设置下载类型
-            response.setHeader("Content-Disposition","attachment; filename=user.xlsx"); // 设置文件的名称
-            outputStream = response.getOutputStream();
-            outputStream.write(body);
+            byte[] body = POIUtils.exportExcel(users).toByteArray();
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Disposition", "attachment; filename=user.xlsx");
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            return new ResponseEntity<byte[]>(body, headers, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            try {
-                if (outputStream != null) {
-                    outputStream.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
         }
     }
 
