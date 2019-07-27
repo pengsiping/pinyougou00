@@ -84,12 +84,6 @@ public class OrderItemServiceImpl extends CoreServiceImpl<TbOrderItem>  implemen
         return pageInfo;
     }
 
-    @Override
-    public List<TbOrderItem> findAllSales() {
-
-       List<TbOrderItem> list = orderItemMapper.findAllSales();
-       return list;
-    }
 
 
 }

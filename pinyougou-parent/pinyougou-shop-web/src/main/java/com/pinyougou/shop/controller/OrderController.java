@@ -4,6 +4,7 @@ import java.util.List;
 import com.github.pagehelper.PageInfo;
 import com.pinyougou.order.service.OrderService;
 import com.pinyougou.pojo.TbOrder;
+import com.pinyougou.pojo.TbOrderItem;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import com.alibaba.dubbo.config.annotation.Reference;
@@ -34,8 +35,8 @@ public class OrderController {
 	@RequestMapping("/findPage")
     public PageInfo<TbOrder> findPage(@RequestParam(value = "pageNo", defaultValue = "1", required = true) Integer pageNo,
 									  @RequestParam(value = "pageSize", defaultValue = "10", required = true) Integer pageSize) {
-        return orderService.findPage(pageNo, pageSize);
-    }
+		return orderService.findPage(pageNo, pageSize);
+	}
 	
 	/**
 	 * 增加
@@ -105,5 +106,15 @@ public class OrderController {
 		order.setSellerId(sellerId);
 		return orderService.findPage(pageNo, pageSize, order);
     }
-	
+    @RequestMapping("/findAllSales")
+     public List<TbOrder> findAllSales(){
+		List<TbOrder> list = orderService.findAllSales();
+		return list;
+	 }
+	@RequestMapping("/findOneTimeSales")
+	public List<TbOrder> findAllSales(String startTime,String endTime){
+		List<TbOrder> list = orderService.findAllSales(startTime,endTime);
+		return list;
+	}
+
 }

@@ -40,4 +40,10 @@ public interface OrderService extends CoreService<TbOrder> {
     void recoverRedisCartList(String userId, String out_trade_no);
 
    List<BigDecimal> getSalesLineChart(List<String> daysList);
+
+
+	List<TbOrder> findAllSales();
+	List<TbOrder> findAllSales(String startTime,String endTime);
+
+
 }

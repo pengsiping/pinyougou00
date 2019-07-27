@@ -1,12 +1,17 @@
 package com.pinyougou.pojo;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.*;
 
 @Table(name = "tb_order")
 public class TbOrder implements Serializable {
+    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
     /**
      * 订单id
      */
@@ -41,9 +46,9 @@ public class TbOrder implements Serializable {
     /**
      * 订单创建时间
      */
+    @DateTimeFormat
     @Column(name = "create_time")
     private Date createTime;
-
     /**
      * 订单更新时间
      */
@@ -53,6 +58,7 @@ public class TbOrder implements Serializable {
     /**
      * 付款时间
      */
+    @DateTimeFormat
     @Column(name = "payment_time")
     private Date paymentTime;
 
@@ -157,8 +163,21 @@ public class TbOrder implements Serializable {
      */
     @Column(name = "seller_id")
     private String sellerId;
+    /**
+     * 一个订单有多个订单明细
+     */
+    @Transient
+    List<TbOrderItem> orderItemList;
 
     private static final long serialVersionUID = 1L;
+
+    public List<TbOrderItem> getOrderItemList() {
+        return orderItemList;
+    }
+
+    public void setOrderItemList(List<TbOrderItem> orderItemList) {
+        this.orderItemList = orderItemList;
+    }
 
     /**
      * 获取订单id
@@ -265,7 +284,8 @@ public class TbOrder implements Serializable {
      * @param createTime 订单创建时间
      */
     public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
+
+            this.createTime = createTime;
     }
 
     /**
@@ -609,4 +629,6 @@ public class TbOrder implements Serializable {
     public void setSellerId(String sellerId) {
         this.sellerId = sellerId;
     }
+
+
 }
