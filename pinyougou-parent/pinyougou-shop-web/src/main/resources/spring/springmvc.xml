@@ -42,6 +42,7 @@
         </mvc:message-converters>
     </mvc:annotation-driven>
 
+
     <import resource="spring-security.xml"></import>
     <import resource="spring-producer.xml"></import>
 </beans>

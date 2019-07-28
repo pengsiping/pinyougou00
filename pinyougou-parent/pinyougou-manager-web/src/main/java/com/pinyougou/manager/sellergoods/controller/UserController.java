@@ -2,9 +2,14 @@ package com.pinyougou.manager.sellergoods.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.github.pagehelper.PageInfo;
+import com.pinyougou.POIUtils;
 import com.pinyougou.pojo.TbUser;
 import com.pinyougou.service.UserService;
 import entity.Result;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +25,22 @@ public class UserController {
 
     @Reference
     private UserService userService;
+
+    @RequestMapping("/userExport")
+    public ResponseEntity<byte[]> userExport() {
+        try {
+            List<TbUser> users = userService.findAll();
+            byte[] body = POIUtils.exportExcel(users).toByteArray();
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Disposition", "attachment; filename=user.xlsx");
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            return new ResponseEntity<byte[]>(body, headers, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
+        }
+    }
+
 
     /**
      * 返回全部列表

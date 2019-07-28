@@ -1,6 +1,7 @@
 var app = new Vue({
     el: "#app",
     data: {
+        sourceType:{1:'PC',2:'H5',3:'Android',4:'IOS',5:'WeChat'},
         pages: 15,
         pageNo: 1,
         list: [],
@@ -79,15 +80,19 @@ var app = new Vue({
         },
         dele: function () {
             axios.post('/user/delete.shtml', this.ids).then(function (response) {
-                console.log(response);
                 if (response.data.success) {
                     app.searchList(1);
                 }
             }).catch(function (error) {
                 console.log(error);
             });
+        },
+        format:function (dateNum) {
+            if(dateNum==undefined||dateNum==""){
+                return ""
+            }
+            return new Date(dateNum).toLocaleDateString();
         }
-
 
     },
     //钩子函数 初始化了事件和

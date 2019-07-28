@@ -119,10 +119,10 @@ public class DeliverGoodsServiceImpl extends CoreServiceImpl<TbOrder> implements
         List<TbOrder> all = orderMapper.selectByExample(example);
         PageInfo<TbOrder> info = new PageInfo<TbOrder>(all);
         //序列化再反序列化
-        String s = JSON.toJSONString(info);
-        PageInfo<TbOrder> pageInfo = JSON.parseObject(s, PageInfo.class);
+       //String s = JSON.toJSONString(info);
+       //PageInfo<TbOrder> pageInfo = JSON.parseObject(s, PageInfo.class);
 
-        return pageInfo;
+        return info;
     }
 
     @Override

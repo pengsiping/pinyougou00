@@ -1,14 +1,18 @@
-package com.pinyougou.shop.controller;
-import java.util.List;
+package com.pinyougou.manager.sellergoods.controller;
 
+import com.alibaba.dubbo.config.annotation.Reference;
 import com.github.pagehelper.PageInfo;
+import com.pinyougou.POIUtils;
 import com.pinyougou.order.service.OrderService;
 import com.pinyougou.pojo.TbOrder;
-import com.pinyougou.pojo.TbOrderItem;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
-import com.alibaba.dubbo.config.annotation.Reference;
 import entity.Result;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 /**
  * controller
  * @author Administrator
@@ -26,17 +30,32 @@ public class OrderController {
 	 * @return
 	 */
 	@RequestMapping("/findAll")
-	public List<TbOrder> findAll(){
+	public List<TbOrder> findAll(){			
 		return orderService.findAll();
 	}
-	
+
+
+	@RequestMapping("/orderExport")
+	public ResponseEntity<byte[]> orderExport(){
+		try {
+			List<TbOrder> orders = orderService.findAll();
+			byte[] body = POIUtils.exportExcel(orders).toByteArray();
+			HttpHeaders headers = new HttpHeaders();
+			headers.add("Content-Disposition", "attachment; filename=order.xlsx");
+			headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+			return new ResponseEntity<>(body, headers, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
+		}
+	}
 	
 	
 	@RequestMapping("/findPage")
     public PageInfo<TbOrder> findPage(@RequestParam(value = "pageNo", defaultValue = "1", required = true) Integer pageNo,
-									  @RequestParam(value = "pageSize", defaultValue = "10", required = true) Integer pageSize) {
-		return orderService.findPage(pageNo, pageSize);
-	}
+                                      @RequestParam(value = "pageSize", defaultValue = "10", required = true) Integer pageSize) {
+        return orderService.findPage(pageNo, pageSize);
+    }
 	
 	/**
 	 * 增加
@@ -102,19 +121,7 @@ public class OrderController {
     public PageInfo<TbOrder> findPage(@RequestParam(value = "pageNo", defaultValue = "1", required = true) Integer pageNo,
                                       @RequestParam(value = "pageSize", defaultValue = "10", required = true) Integer pageSize,
                                       @RequestBody TbOrder order) {
-		String sellerId = SecurityContextHolder.getContext().getAuthentication().getName();
-		order.setSellerId(sellerId);
-		return orderService.findPage(pageNo, pageSize, order);
+        return orderService.findPage(pageNo, pageSize, order);
     }
-    @RequestMapping("/findAllSales")
-     public List<TbOrder> findAllSales(){
-		List<TbOrder> list = orderService.findAllSales();
-		return list;
-	 }
-	@RequestMapping("/findOneTimeSales")
-	public List<TbOrder> findAllSales(String startTime,String endTime){
-		List<TbOrder> list = orderService.findAllSales(startTime,endTime);
-		return list;
-	}
-
+	
 }

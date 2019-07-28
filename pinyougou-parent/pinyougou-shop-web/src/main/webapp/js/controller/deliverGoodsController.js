@@ -7,7 +7,8 @@
         entity: {},
         ids: [],
         searchEntity: {},
-        status: ['未付款', '已付款', '未发货', '已发货']
+        status: ['未付款', '已付款', '未发货', '已发货'],
+
     },
     methods: {
         searchList: function (curPage) {
@@ -31,6 +32,9 @@
                 console.log("1231312131321");
             });
         }
+
+
+
 
         },
         //钩子函数 初始化了事件和

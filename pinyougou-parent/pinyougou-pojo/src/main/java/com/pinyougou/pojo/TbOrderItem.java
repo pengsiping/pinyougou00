@@ -61,8 +61,20 @@ public class TbOrderItem implements Serializable {
 
     @Column(name = "seller_id")
     private String sellerId;
-
+    /**
+     * 一个订单明细对应一个商品
+     */
+    @Transient
+    private TbGoods tbGoods;
     private static final long serialVersionUID = 1L;
+
+    public TbGoods getTbGoods() {
+        return tbGoods;
+    }
+
+    public void setTbGoods(TbGoods tbGoods) {
+        this.tbGoods = tbGoods;
+    }
 
     /**
      * @return id
