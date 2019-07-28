@@ -100,7 +100,6 @@ public class ItemPageServiceImpl implements ItemPageService {
             //2.设置字符编码 和 模板加载的目录---配置文件
             Configuration configuration = markerConfigurer.getConfiguration();
 
-
             //创建模板
             Template template1= configuration.getTemplate(templateName);
 

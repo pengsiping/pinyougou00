@@ -52,7 +52,9 @@ var app = new Vue({
             }).then(function (response) {
                 if (response.data.success) {
                     console.log(this);
-                    app.image = response.data.message;
+                    //app.image = response.data.message;
+                    alert(response.data.message);
+                    app.userInfo.headPic=response.data.message;
                     alert(123)
                 } else {
                     alert(response.data.message);
