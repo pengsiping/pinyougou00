@@ -22,6 +22,7 @@ var app = new Vue({
                 app.pageNo = curPage;
                 //总页数
                 app.pages = response.data.pages;
+
             });
         },
         //查询所有品牌列表
