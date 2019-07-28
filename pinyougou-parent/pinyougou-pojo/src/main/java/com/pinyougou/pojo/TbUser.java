@@ -151,7 +151,7 @@ public class TbUser implements Serializable {
      */
 
     @Column(name = "birthday")
-    private Date birthday;
+    private String birthday;
 
     /**
      * 最后登录时间
@@ -159,6 +159,58 @@ public class TbUser implements Serializable {
 
     @Column(name = "last_login_time")
     private Date lastLoginTime;
+
+    @Column(name = "province_id")
+    private String provinceId;
+
+    @Column(name = "city_id")
+    private String cityId;
+
+    @Column(name = "town_id")
+    private String townId;
+
+    @Column(name = "job")
+    private String job;
+
+    public String getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
+    }
+
+    public String getProvinceId() {
+        return provinceId;
+    }
+
+    public void setProvinceId(String provinceId) {
+        this.provinceId = provinceId;
+    }
+
+    public String getCityId() {
+        return cityId;
+    }
+
+    public void setCityId(String cityId) {
+        this.cityId = cityId;
+    }
+
+    public String getTownId() {
+        return townId;
+    }
+
+    public void setTownId(String townId) {
+        this.townId = townId;
+    }
+
+    public String getJob() {
+        return job;
+    }
+
+    public void setJob(String job) {
+        this.job = job;
+    }
 
     private static final long serialVersionUID = 1L;
 
@@ -514,23 +566,6 @@ public class TbUser implements Serializable {
         this.experienceValue = experienceValue;
     }
 
-    /**
-     * 获取生日
-     *
-     * @return birthday - 生日
-     */
-    public Date getBirthday() {
-        return birthday;
-    }
-
-    /**
-     * 设置生日
-     *
-     * @param birthday 生日
-     */
-    public void setBirthday(Date birthday) {
-        this.birthday = birthday;
-    }
 
     /**
      * 获取最后登录时间

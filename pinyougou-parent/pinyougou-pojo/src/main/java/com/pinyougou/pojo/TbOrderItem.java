@@ -61,6 +61,16 @@ public class TbOrderItem implements Serializable {
 
     @Column(name = "seller_id")
     private String sellerId;
+    @Transient  //不需要从数据库进行映射
+    private String spec;
+
+    public String getSpec() {
+        return spec;
+    }
+
+    public void setSpec(String spec) {
+        this.spec = spec;
+    }
 
     private static final long serialVersionUID = 1L;
 
