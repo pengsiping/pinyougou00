@@ -1,13 +1,21 @@
 package com.pinyougou.manager.sellergoods.controller;
-import java.util.List;
 
-import org.springframework.web.bind.annotation.*;
 import com.alibaba.dubbo.config.annotation.Reference;
+import com.github.pagehelper.PageInfo;
+import com.pinyougou.POIUtils;
 import com.pinyougou.pojo.TbBrand;
 import com.pinyougou.sellergoods.service.BrandService;
-
-import com.github.pagehelper.PageInfo;
 import entity.Result;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * controller
  * @author Administrator
@@ -28,8 +36,38 @@ public class BrandController {
 	public List<TbBrand> findAll(){			
 		return brandService.findAll();
 	}
+
+	@RequestMapping("/template")
+	public ResponseEntity<byte[]> template() {
+		try {
+			List<TbBrand> list = new ArrayList<>();
+			list.add(new TbBrand());
+			byte[] body = POIUtils.exportExcel(list).toByteArray();
+			HttpHeaders headers = new HttpHeaders();
+			headers.add("Content-Disposition", "attachment; filename=brand.xlsx");
+			headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+			return new ResponseEntity<byte[]>(body, headers, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
+		}
+	}
 	
-	
+	@RequestMapping("/upload")
+	public Result upload(@RequestParam("file") MultipartFile file){
+		try {
+			List<TbBrand> list = POIUtils.readExcel(file.getInputStream(),file.getOriginalFilename(),TbBrand.class);
+			if(list.size() > 0){
+				for (TbBrand tbBrand : list) {
+					brandService.insertSelective(tbBrand);
+				}
+			}
+			return new Result(true,"导入成功");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new Result(false,e.getMessage());
+		}
+	}
 	
 	@RequestMapping("/findPage")
     public PageInfo<TbBrand> findPage(@RequestParam(value = "pageNo", defaultValue = "1", required = true) Integer pageNo,

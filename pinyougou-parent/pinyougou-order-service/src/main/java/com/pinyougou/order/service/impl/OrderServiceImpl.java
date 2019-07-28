@@ -6,21 +6,15 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.pinyougou.IdWorker;
 import com.pinyougou.core.service.CoreServiceImpl;
-import com.pinyougou.mapper.TbItemMapper;
-import com.pinyougou.mapper.TbOrderItemMapper;
-import com.pinyougou.mapper.TbOrderMapper;
-import com.pinyougou.mapper.TbPayLogMapper;
+import com.pinyougou.mapper.*;
 import com.pinyougou.order.service.OrderService;
-import com.pinyougou.pojo.TbItem;
-import com.pinyougou.pojo.TbOrder;
-import com.pinyougou.pojo.TbOrderItem;
-import com.pinyougou.pojo.TbPayLog;
+import com.pinyougou.pojo.*;
 import entity.Cart;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import tk.mybatis.mapper.entity.Example;
-
+import org.apache.commons.beanutils.ConvertUtils;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -39,6 +33,12 @@ public class OrderServiceImpl extends CoreServiceImpl<TbOrder> implements OrderS
     private TbOrderMapper orderMapper;
 
     @Autowired
+    public OrderServiceImpl(TbOrderMapper orderMapper) {
+        super(orderMapper, TbOrder.class);
+        this.orderMapper = orderMapper;
+    }
+
+    @Autowired
     private RedisTemplate redisTemplate;
 
     @Autowired
@@ -52,12 +52,11 @@ public class OrderServiceImpl extends CoreServiceImpl<TbOrder> implements OrderS
 
     @Autowired
     private TbPayLogMapper tbPayLogMapper;
-
     @Autowired
-    public OrderServiceImpl(TbOrderMapper orderMapper) {
-        super(orderMapper, TbOrder.class);
-        this.orderMapper = orderMapper;
-    }
+    private TbSellerMapper sellerMapper;
+
+
+
 
 
     @Override
@@ -67,19 +66,17 @@ public class OrderServiceImpl extends CoreServiceImpl<TbOrder> implements OrderS
         PageInfo<TbOrder> info = new PageInfo<TbOrder>(all);
 
         //序列化再反序列化
-        String s = JSON.toJSONString(info);
-        PageInfo<TbOrder> pageInfo = JSON.parseObject(s, PageInfo.class);
-        return pageInfo;
+//        String s = JSON.toJSONString(info);
+//        PageInfo<TbOrder> pageInfo = JSON.parseObject(s, PageInfo.class);
+        return info;
     }
 
 
     @Override
     public PageInfo<TbOrder> findPage(Integer pageNo, Integer pageSize, TbOrder order) {
         PageHelper.startPage(pageNo, pageSize);
-
         Example example = new Example(TbOrder.class);
         Example.Criteria criteria = example.createCriteria();
-
         if (order != null) {
             if (StringUtils.isNotBlank(order.getPaymentType())) {
                 criteria.andLike("paymentType", "%" + order.getPaymentType() + "%");
@@ -142,21 +139,20 @@ public class OrderServiceImpl extends CoreServiceImpl<TbOrder> implements OrderS
                 //criteria.andSourceTypeLike("%"+order.getSourceType()+"%");
             }
             if (StringUtils.isNotBlank(order.getSellerId())) {
-                criteria.andLike("sellerId", "%" + order.getSellerId() + "%");
+                criteria.andEqualTo("sellerId",order.getSellerId());
                 //criteria.andSellerIdLike("%"+order.getSellerId()+"%");
             }
 
         }
         List<TbOrder> all = orderMapper.selectByExample(example);
         PageInfo<TbOrder> info = new PageInfo<TbOrder>(all);
-        //序列化再反序列化
-        String s = JSON.toJSONString(info);
-        PageInfo<TbOrder> pageInfo = JSON.parseObject(s, PageInfo.class);
+//        //序列化再反序列化
+//        String s = JSON.toJSONString(info);
+//        PageInfo<TbOrder> pageInfo = JSON.parseObject(s, PageInfo.class);
 
-        return pageInfo;
+        return info;
     }
-
-    /**
+    /*
      * 获取日志信息
      * @param userId
      * @return
@@ -169,8 +165,6 @@ public class OrderServiceImpl extends CoreServiceImpl<TbOrder> implements OrderS
     }
 
 
-    @Autowired
-    private TbOrderMapper tbOrderMapper;
 
     //更新交易日志信息
     @Override
@@ -185,7 +179,7 @@ public class OrderServiceImpl extends CoreServiceImpl<TbOrder> implements OrderS
         String orderList = tbPayLog.getOrderList();
         String[] orderIds = orderList.split(",");
         for (String orderId : orderIds) {
-            TbOrder order = tbOrderMapper.selectByPrimaryKey(Long.parseLong(orderId));
+            TbOrder order = orderMapper.selectByPrimaryKey(Long.parseLong(orderId));
             if(order!=null){
                 order.setStatus("2");
                 order.setUpdateTime(new Date());
@@ -193,13 +187,94 @@ public class OrderServiceImpl extends CoreServiceImpl<TbOrder> implements OrderS
                 System.out.println(order.getUpdateTime()+"===="+order.getPaymentTime());
                 order.setPaymentTime(order.getUpdateTime());
                 //更新订单信息
-                tbOrderMapper.updateByPrimaryKey(order);
+                orderMapper.updateByPrimaryKey(order);
             }
 
         }
         redisTemplate.boundHashOps("payLog").delete(tbPayLog.getUserId());
     }
 
+    @Override
+    public void recoverRedisCartList(String userId, String out_trade_no) {
+        Long[] orderIds=null;
+        List<TbOrderItem> orderItemList=null;
+        String sellerId=null;
+        List<Cart> cartList = new ArrayList<>();
+        TbPayLog payLog = new TbPayLog();
+        payLog.setOutTradeNo(out_trade_no);
+        List<TbPayLog> tbPayLogList = tbPayLogMapper.select(payLog);
+        if(tbPayLogList!=null) {
+            for (TbPayLog tbPayLog : tbPayLogList) {
+                Cart cart= new Cart();
+                String orderList = tbPayLog.getOrderList();//"23,32"
+                String[] strArray = orderList.split(",");//"[23,32]"
+                 orderIds = (Long[]) ConvertUtils.convert(strArray,Long.class);
+                if(orderIds!=null) {
+                    for (Long orderId : orderIds) {
+                        //设置orderItemList
+                        TbOrderItem tbOrderItem = new TbOrderItem();
+                        tbOrderItem.setOrderId(orderId);
+                        orderItemList = tbOrderItemMapper.select(tbOrderItem);
+                        cart.setOrderItemList(orderItemList);
+
+                        TbOrder tbOrder = orderMapper.selectByPrimaryKey(orderId);
+                        for (TbOrderItem orderItem : orderItemList) {
+                            sellerId = orderItem.getSellerId();
+                            cart.setSellerId(sellerId);
+                        }
+                        TbSeller tbSeller = new TbSeller();
+                        tbSeller.setSellerId(sellerId);
+                        List<TbSeller> tbSellerList = sellerMapper.select(tbSeller);
+                        if(tbSellerList!=null) {
+                            for (TbSeller seller : tbSellerList) {
+                                //店铺名称
+                                String nickName = seller.getNickName();
+                                cart.setSellerName(nickName);
+                            }
+                        }
+
+                    }
+                }
+                cartList.add(cart);
+            }
+        }
+        redisTemplate.boundHashOps("REDIS_CARTLIST").put(userId,cartList);
+        //删除订单表数据，删除订单明细表数据,支付日志表
+        for (Long orderId : orderIds) {
+            orderMapper.deleteByPrimaryKey(orderId);
+        }
+        for (TbOrderItem tbOrderItem : orderItemList) {
+            tbOrderItemMapper.delete(tbOrderItem);
+        }
+        TbPayLog tbPayLog = new TbPayLog();
+        tbPayLog.setOutTradeNo(out_trade_no);
+        tbPayLogMapper.delete(tbPayLog);
+
+        throw new RuntimeException("超时");
+    }
+
+    @Override
+    public List<BigDecimal> getSalesLineChart(List<String> daysList) {
+        String status= "1";
+        List<BigDecimal> moneyList = new ArrayList<>();
+        for (String day : daysList) {
+          BigDecimal  dayMoney = orderMapper.getSalesLineChart(day,status);
+          moneyList.add(dayMoney);
+        }
+        return moneyList;
+    }
+
+    @Override
+    public List<TbOrder> findAllSales() {
+       List<TbOrder> list =  orderMapper.findAllSales();
+       return list;
+    }
+
+    @Override
+    public List<TbOrder> findAllSales(String startTime, String endTime) {
+        List<TbOrder> list =  orderMapper.findOnTimeSales(startTime,endTime);
+        return list;
+    }
 
     @Override
     public void add(TbOrder record) {

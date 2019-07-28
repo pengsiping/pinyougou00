@@ -22,4 +22,21 @@
 
     <bean class="com.pinyougou.page.listener.GoodsMessageListener" id="messageListener"></bean>
 
+    <bean class="org.apache.rocketmq.client.consumer.DefaultMQPushConsumer" init-method="start" destroy-method="shutdown">
+        <!--1.地址及群组配置-->
+        <property name="namesrvAddr" value="127.0.0.1:9876"></property>
+        <property name="consumerGroup" value="consumer_onSale_group"></property>
+        <!--接收模式设置-->
+        <property name="messageModel" value="BROADCASTING"></property>
+        <!--主题及标签设置-->
+        <property name="subscription">
+            <map>
+                <entry key="OnSale_Topic" value="*"></entry>
+            </map>
+        </property>
+
+        <!--消息监听器设置-->
+        <property name="messageListener" ref="messageListener"></property>
+    </bean>
+
 </beans>

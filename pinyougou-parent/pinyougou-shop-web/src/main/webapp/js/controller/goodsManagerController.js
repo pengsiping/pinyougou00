@@ -7,6 +7,7 @@
         entity:{},
         ids:[],
         searchEntity:{},
+        isOnSale:['已下架','已上架'],
         status:['未审核','已审核','审核未通过','已关闭'],
         itemCatList:[]
     },
@@ -22,6 +23,7 @@
                 app.pageNo=curPage;
                 //总页数
                 app.pages=response.data.pages;
+
             });
         },
 
@@ -44,6 +46,27 @@
                 console.log("1231312131321");
             })
         },
+
+        //上架商品
+        onSale:function(isOnSale){
+            alert("上下架")
+            axios.post("/goods/updateSaleStatus/"+isOnSale+".shtml",this.ids).then(function (response) {
+                app.ids=[];
+                if(response.data.success){
+                    //上下架成功,更新页面
+                    app.searchList(app.pageNo);
+                } else{
+                    alert(response.data.message);
+                    app.searchList(app.pageNo);
+                }
+
+            })
+        },
+
+
+
+
+
          findPage:function () {
             var that = this;
             axios.get('/goods/findPage.shtml',{params:{
@@ -64,7 +87,7 @@
             axios.post('/goods/add.shtml',this.entity).then(function (response) {
                 console.log(response);
                 if(response.data.success){
-                    app.searchList(1);
+                    app.searchList(app.pageNo);
                 }
             }).catch(function (error) {
                 console.log("1231312131321");
@@ -74,7 +97,7 @@
             axios.post('/goods/update.shtml',this.entity).then(function (response) {
                 console.log(response);
                 if(response.data.success){
-                    app.searchList(1);
+                    app.searchList(app.pageNo);
                 }
             }).catch(function (error) {
                 console.log("1231312131321");
@@ -98,7 +121,7 @@
             axios.post('/goods/delete.shtml',this.ids).then(function (response) {
                 console.log(response);
                 if(response.data.success){
-                    app.searchList(1);
+                    app.searchList(app.pageNo);
                 }
             }).catch(function (error) {
                 console.log("1231312131321");

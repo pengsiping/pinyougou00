@@ -173,6 +173,7 @@
                     </div>
                     <div class="step-cont" >
                         <ul class="send-detail" v-for="cart in cartList">
+                            <span>商家:{{cart.sellerId}}</span>
                             <li v-for="orderItem in cart.orderItemList">
 
                                 <div class="sendGoods">

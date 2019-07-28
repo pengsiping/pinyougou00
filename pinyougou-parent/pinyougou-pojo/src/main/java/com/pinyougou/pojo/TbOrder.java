@@ -2,12 +2,14 @@ package com.pinyougou.pojo;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.*;
 
 @Table(name = "tb_order")
 public class TbOrder implements Serializable {
+    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
     /**
      * 订单id
      */
@@ -42,6 +44,7 @@ public class TbOrder implements Serializable {
     /**
      * 订单创建时间
      */
+    @DateTimeFormat
     @Column(name = "create_time")
     private Date createTime;
 
@@ -54,6 +57,7 @@ public class TbOrder implements Serializable {
     /**
      * 付款时间
      */
+    @DateTimeFormat
     @Column(name = "payment_time")
     private Date paymentTime;
 

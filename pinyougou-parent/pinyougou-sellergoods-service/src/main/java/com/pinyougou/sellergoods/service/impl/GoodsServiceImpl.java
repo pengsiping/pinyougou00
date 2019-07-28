@@ -1,9 +1,6 @@
 package com.pinyougou.sellergoods.service.impl;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.alibaba.fastjson.JSONArray;
 import com.pinyougou.mapper.*;
@@ -74,7 +71,7 @@ public class GoodsServiceImpl extends CoreServiceImpl<TbGoods> implements GoodsS
 
         Example example = new Example(TbGoods.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("isDelete","0");
+        criteria.andEqualTo("isDelete", "0");
 
         if (goods != null) {
             if (StringUtils.isNotBlank(goods.getSellerId())) {
@@ -207,7 +204,7 @@ public class GoodsServiceImpl extends CoreServiceImpl<TbGoods> implements GoodsS
     }
 
     @Override
-    public void updateStatus(String status,Long[] ids) {
+    public void updateStatus(String status, Long[] ids) {
         /*for (Long id : ids) {
             TbGoods tbGoods = goodsMapper.selectByPrimaryKey(id);
             tbGoods.setAuditStatus(status);
@@ -215,19 +212,20 @@ public class GoodsServiceImpl extends CoreServiceImpl<TbGoods> implements GoodsS
         }*/
         Example example = new Example(TbGoods.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andIn("id",Arrays.asList(ids));
-        TbGoods tbGoods= new TbGoods();
+        criteria.andIn("id", Arrays.asList(ids));
+        TbGoods tbGoods = new TbGoods();
         tbGoods.setAuditStatus(status);
-        goodsMapper.updateByExampleSelective(tbGoods,example);
+        goodsMapper.updateByExampleSelective(tbGoods, example);
     }
 
     @Override
     public List<TbItem> findTbItemListByIds(Long[] ids) {
         Example example = new Example(TbItem.class);
-        example.createCriteria().andIn("goodsId",Arrays.asList(ids)).andEqualTo("status","1");
+        example.createCriteria().andIn("goodsId", Arrays.asList(ids)).andEqualTo("status", "1");
 
         return tbItemMapper.selectByExample(example);
     }
+
 
     private void saveItems(Goods goods, TbGoods tbGoods, TbGoodsDesc tbGoodsDesc) {
         if ("1".equals(tbGoods.getIsEnableSpec())) {
@@ -318,4 +316,38 @@ public class GoodsServiceImpl extends CoreServiceImpl<TbGoods> implements GoodsS
         }
 
     }
+
+    //商品上下架
+
+    @Override
+    public void updateSaleStatus(String isOnSale, Long[] ids) {
+        if (ids != null) {
+            for (Long id : ids) {
+                TbGoods tbGoods = goodsMapper.selectByPrimaryKey(id);
+                //先判断商品是否通过审核
+                if ("1".equals(tbGoods.getAuditStatus())) {
+                    //0代表下架,1代表上架
+                    tbGoods.setIsMarketable(isOnSale);
+                    goodsMapper.updateByPrimaryKey(tbGoods);
+                } else {
+                    throw new RuntimeException("商品未审核或含有未审核商品");
+                }
+
+            }
+        } else {
+            throw new RuntimeException("请选择商品");
+        }
+
+    }
+
+    @Override
+    public List<TbGoods> findTbGoodsByIds(Long[] ids) {
+        List<TbGoods> tbGoodsList = new ArrayList<>();
+        for (Long id : ids) {
+            TbGoods tbGoods = goodsMapper.selectByPrimaryKey(id);
+            tbGoodsList.add(tbGoods);
+        }
+        return tbGoodsList;
+    }
+
 }

@@ -2,6 +2,7 @@ package com.pinyougou.search.service;
 
 
 
+
 import com.pinyougou.pojo.TbItem;
 
 import java.util.List;
@@ -15,5 +16,6 @@ public interface ItemSearchService {
     public void updateIndex(List<TbItem> list);
 
     public void deleteByIds(Long[] ids);
+
 
 }

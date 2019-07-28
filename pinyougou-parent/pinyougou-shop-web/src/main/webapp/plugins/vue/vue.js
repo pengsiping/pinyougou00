@@ -10940,6 +10940,7 @@ function getOuterHTML (el) {
   }
 }
 
+
 Vue.compile = compileToFunctions;
 
 return Vue;
