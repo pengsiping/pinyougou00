@@ -21,7 +21,7 @@ public class UserAnalyse {
     @Autowired
     private TbAnalysePVMapper pvMapper;
 
-    @Scheduled(cron="0 0,30 * * * ? ")
+    @Scheduled(cron="0 0 * * * ? ")
     public void UserCount(){
         RedisAtomicLong count = new RedisAtomicLong("portalCount", redisTemplate.getConnectionFactory());
         long num = count.get();

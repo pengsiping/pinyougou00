@@ -9,7 +9,9 @@ import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.pinyougou.core.service.CoreServiceImpl;
+import com.pinyougou.mapper.TbAnalysePVMapper;
 import com.pinyougou.mapper.TbUserMapper;
+import com.pinyougou.pojo.TbAnalysePV;
 import com.pinyougou.pojo.TbUser;
 import com.pinyougou.service.UserService;
 import org.apache.commons.lang3.StringUtils;
@@ -21,10 +23,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import tk.mybatis.mapper.entity.Example;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 
@@ -46,6 +46,9 @@ public class UserServiceImpl extends CoreServiceImpl<TbUser>  implements UserSer
 
 	@Autowired
 	private DefaultMQProducer producer;
+
+	@Autowired
+	private TbAnalysePVMapper analysePVMapper;
 
 	@Value("${SignName}")
 	private String Sign_Name;
@@ -197,6 +200,27 @@ public class UserServiceImpl extends CoreServiceImpl<TbUser>  implements UserSer
 
 	@Autowired
 	private TbItemMapper tbItemMapper;
+
+	@Override
+	public Map<String, Object> showChart() {
+		Map<String, Object> map = new HashMap<>();
+		Example example = new Example(TbAnalysePV.class);
+		Example.Criteria criteria = example.createCriteria();
+		Calendar c1 = Calendar.getInstance();
+		c1.set(c1.get(Calendar.YEAR), c1.get(Calendar.MONTH), c1.get(Calendar.DAY_OF_MONTH)-1);
+		criteria.andGreaterThanOrEqualTo("endTime",c1.getTime());
+		List<TbAnalysePV> list = analysePVMapper.selectByExample(example);
+		List<Long> count = new ArrayList<>();
+		List<String> time = new ArrayList<>();
+		SimpleDateFormat format = new SimpleDateFormat("MM-dd");
+		for (TbAnalysePV tbAnalysePV : list) {
+			count.add(tbAnalysePV.getNum());
+			time.add(format.format(tbAnalysePV.getStartTime()));
+		}
+		map.put("time", time);
+		map.put("count", count);
+		return map;
+	}
 
 	@Override
 	public void delete(Object[] ids) {
