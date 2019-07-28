@@ -1,4 +1,9 @@
 package com.pinyougou.user.service.impl;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+
+import com.pinyougou.mapper.*;
+import com.pinyougou.pojo.*;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
@@ -32,6 +37,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Service
 public class UserServiceImpl extends CoreServiceImpl<TbUser>  implements UserService {
+
 	
 	private TbUserMapper userMapper;
 
@@ -47,11 +53,14 @@ public class UserServiceImpl extends CoreServiceImpl<TbUser>  implements UserSer
 	@Value("${TemplateCode}")
 	private String TemplateCode;
 
+
+
 	@Autowired
 	public UserServiceImpl(TbUserMapper userMapper) {
 		super(userMapper, TbUser.class);
 		this.userMapper=userMapper;
 	}
+
 
 
 
@@ -66,6 +75,9 @@ public class UserServiceImpl extends CoreServiceImpl<TbUser>  implements UserSer
         PageInfo<TbUser> pageInfo = JSON.parseObject(s, PageInfo.class);
         return pageInfo;
     }
+
+	
+	
 
 	 @Override
     public PageInfo<TbUser> findPage(Integer pageNo, Integer pageSize, TbUser user) {
@@ -178,6 +190,13 @@ public class UserServiceImpl extends CoreServiceImpl<TbUser>  implements UserSer
 
 		return true;
 	}
+	@Autowired
+	private TbOrderMapper tbOrderMapper;
+	@Autowired
+	private TbOrderItemMapper tbOrderItemMapper;
+
+	@Autowired
+	private TbItemMapper tbItemMapper;
 
 	@Override
 	public void delete(Object[] ids) {
@@ -188,4 +207,168 @@ public class UserServiceImpl extends CoreServiceImpl<TbUser>  implements UserSer
 		user.setStatus("N");
 		userMapper.updateByExampleSelective(user, example);
 	}
+	@Override
+	public List<TbOrder> findUnpayOrders(String userId) {
+		List<TbOrder> tbOrders=new ArrayList<>();
+		if(userId!=null){
+			//TbOrder tbOrder=new TbOrder();
+			//根据条件查出对应的未付款订单
+			Example example=new Example(TbOrder.class);
+			Example.Criteria criteria = example.createCriteria();
+			criteria.andEqualTo("userId",userId);
+			criteria.andEqualTo("status","1");
+			tbOrders= tbOrderMapper.selectByExample(example);
+			if(tbOrders!=null&&tbOrders.size()>0){
+				for (TbOrder order : tbOrders) {
+					//TbOrderItem tbOrderItem=new TbOrderItem();
+					//tbOrderItem.setOrderId(order.getOrderId());
+					Example example1=new Example(TbOrderItem.class);
+					Example.Criteria criteria1 = example1.createCriteria();
+					criteria1.andEqualTo("orderId",order.getOrderId());
+					List<TbOrderItem> orderItems = tbOrderItemMapper.selectByExample(example1);
+					if(orderItems!=null&&orderItems.size()>0){
+						//通过temtId获取spec
+						for (TbOrderItem orderItem : orderItems) {
+							TbItem tbItem = tbItemMapper.selectByPrimaryKey(orderItem.getItemId());
+							orderItem.setSpec(tbItem.getSpec());
+						}
+						//设置tbOrder的items属性
+						order.setTbOrderItems(orderItems);
+					}
+
+				}
+			}
+		} return tbOrders;
+	}
+
+
+
+    @Override
+    public List<TbOrder> findMyOrders(String userId) {
+		List<TbOrder> tbOrders=new ArrayList<>();
+        if(userId!=null){
+            //TbOrder tbOrder=new TbOrder();
+            //根据条件查出对应的未付款订单
+            Example example=new Example(TbOrder.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("userId",userId);
+            //criteria.andEqualTo("status","1");
+            tbOrders= tbOrderMapper.selectByExample(example);
+            if(tbOrders!=null&&tbOrders.size()>0){
+                for (TbOrder order : tbOrders) {
+                    //TbOrderItem tbOrderItem=new TbOrderItem();
+                    //tbOrderItem.setOrderId(order.getOrderId());
+                    Example example1=new Example(TbOrderItem.class);
+                    Example.Criteria criteria1 = example1.createCriteria();
+                    criteria1.andEqualTo("orderId",order.getOrderId());
+                    List<TbOrderItem> orderItems = tbOrderItemMapper.selectByExample(example1);
+                    if(orderItems!=null&&orderItems.size()>0){
+                        //通过temtId获取spec
+                        for (TbOrderItem orderItem : orderItems) {
+                            TbItem tbItem = tbItemMapper.selectByPrimaryKey(orderItem.getItemId());
+                            orderItem.setSpec(tbItem.getSpec());
+                        }
+						//设置tbOrder的items属性
+						order.setTbOrderItems(orderItems);
+                    }
+
+                }
+            }
+        } return tbOrders;
+
+    }
+	@Autowired
+	private TbUserMapper tbUserMapper;
+
+
+	@Autowired
+	private TbAddressMapper tbAddressMapper;
+
+
+	@Override
+	public List<TbAddress> findAddress(String userId) {
+		Example example=new Example(TbAddress.class);
+		Example.Criteria criteria = example.createCriteria();
+		criteria.andEqualTo("userId",userId);
+		//根据用户名查询地址
+		List<TbAddress> addresses=  tbAddressMapper.selectByExample(example);
+		return addresses;
+	}
+
+	@Override
+	public int deleteAddress(Integer index,String userId) {
+		List<TbAddress> addresses = findAddress(userId);
+		int i=0;
+		if(addresses!=null && addresses.size()>0){
+			for (int j = 0; j < addresses.size(); j++) {
+				TbAddress address = addresses.get(index);
+				i = tbAddressMapper.delete(address);
+			}
+		}
+		return i;
+	}
+
+	@Override
+	public int addAddress(String userId,TbAddress item) {
+		TbAddress address=new TbAddress();
+		address.setUserId(userId);//设置用户id
+		address.setProvinceId(item.getProvinceId());//设置省
+		address.setCityId(item.getCityId());//设置市
+		address.setTownId(item.getTownId());//设置县
+		address.setMobile(item.getMobile());//设置手机号
+		address.setAddress(item.getAddress());//设置详细地址
+		address.setContact(item.getContact());//设置联系人
+		address.setIsDefault("0");//设置不默认
+		address.setCreateDate(new Date());//设置创建日期
+		address.setAlias(item.getAlias());//设置别名
+		int i = tbAddressMapper.insert(address);
+		return i;
+	}
+	//设置地址默认值
+	@Override
+	public void setDefaultAddress(Integer index,String userId) {
+		List<TbAddress> addresses = findAddress(userId);
+		if(addresses!=null && addresses.size()>0){
+			for (int i = 0; i < addresses.size(); i++) {
+				if(i==index){
+					TbAddress address = addresses.get(i);
+					address.setIsDefault("1");
+					tbAddressMapper.updateByPrimaryKey(address);
+				}else {
+					TbAddress address = addresses.get(i);
+					address.setIsDefault("0");
+					tbAddressMapper.updateByPrimaryKey(address);
+				}
+			}
+		}
+	}
+
+    @Override
+    public TbAddress findOneAddress(Long id) {
+        TbAddress address = tbAddressMapper.selectByPrimaryKey(id);
+        return address;
+    }
+
+	@Override
+	public int updateAddress(TbAddress item) {
+		int i = tbAddressMapper.updateByPrimaryKey(item);
+		return i;
+	}
+
+	@Override
+	public void register(TbUser userInfo,String userName) {
+        TbUser tbUser=new TbUser();
+        tbUser.setUsername(userName);
+		TbUser user = tbUserMapper.selectOne(tbUser);
+
+		user.setNickName(userInfo.getNickName());//设置昵称
+        user.setProvinceId(userInfo.getProvinceId());//设置省
+        user.setCityId(userInfo.getCityId());//设置城市
+        user.setTownId(userInfo.getTownId());//设置区
+        user.setJob(userInfo.getJob());//设置职业
+        user.setBirthday(userInfo.getBirthday());//设置生日
+        user.setSex(userInfo.getSex());//设置性别
+        user.setHeadPic(userInfo.getHeadPic());//设置头像
+		tbUserMapper.updateByPrimaryKey(user);
+    }
 }

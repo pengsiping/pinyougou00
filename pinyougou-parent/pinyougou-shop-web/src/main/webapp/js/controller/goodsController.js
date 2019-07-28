@@ -134,7 +134,7 @@
         },
         upload: function () {
             var formData = new FormData();
-            formData.append('file', file.files[0]);
+            formData.append('file',file.files[0] );//
             axios({
                 url: "http://localhost:9110/upload/uploadFile.shtml",
                 data: formData,
