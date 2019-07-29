@@ -1,17 +1,24 @@
 package com.pinyougou.pojo;
 
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import javax.persistence.*;
 
 @Table(name = "tb_goods")
+@Document(indexName = "goodsonsale",type = "goods")
 public class TbGoods implements Serializable {
     /**
      * 主键
      */
-    @Id
+    @Id  //文档唯一的ID 标识该字段为文档的唯一标识
     @Column(name = "id")
+    @Field
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.springframework.data.annotation.Id
     private Long id;
 
     /**
@@ -24,6 +31,7 @@ public class TbGoods implements Serializable {
      * SPU名
      */
     @Column(name = "goods_name")
+    @Field(index=true,analyzer = "ik_smart",searchAnalyzer = "ik_smart",type = FieldType.Text )
     private String goodsName;
 
     /**

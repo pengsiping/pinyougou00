@@ -1,22 +1,27 @@
 package com.pinyougou.manager.sellergoods.controller;
-import java.util.List;
 
+import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.fastjson.JSON;
+import com.github.pagehelper.PageInfo;
 import com.pinyougou.MessageInfo;
+import com.pinyougou.POIUtils;
+import com.pinyougou.pojo.TbGoods;
 import com.pinyougou.pojo.TbItem;
+import com.pinyougou.sellergoods.service.GoodsService;
 import com.pinyougou.sellergoods.service.ItemService;
 import entity.Goods;
+import entity.Result;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.common.message.Message;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.alibaba.dubbo.config.annotation.Reference;
-import com.pinyougou.pojo.TbGoods;
-import com.pinyougou.sellergoods.service.GoodsService;
 
-import com.github.pagehelper.PageInfo;
-import entity.Result;
+import java.util.List;
 /**
  * controller
  * @author Administrator
@@ -42,7 +47,22 @@ public class GoodsController {
 
 	@Autowired
 	private DefaultMQProducer producer;
-	
+
+	@RequestMapping("/goodsExport")
+	public ResponseEntity<byte[]> goodsExport(){
+		try {
+			List<TbItem> users = itemService.findAll();
+			byte[] body = POIUtils.exportExcel(users).toByteArray();
+			HttpHeaders headers = new HttpHeaders();
+			headers.add("Content-Disposition", "attachment; filename=item.xlsx");
+			headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+			return new ResponseEntity<byte[]>(body, headers, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
+		}
+	}
+
 	/**
 	 * 返回全部列表
 	 * @return

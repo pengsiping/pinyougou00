@@ -4,13 +4,15 @@ import java.util.Date;
 import java.util.List;
 
 import com.alibaba.fastjson.JSON;
+import com.pinyougou.pojo.TbAddress;
+import com.pinyougou.pojo.TbOrder;
 import com.pinyougou.service.UserService;
 
 import entity.Cart;
 import entity.Error;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -263,5 +265,88 @@ public class UserController {
                                       @RequestBody TbUser user) {
         return userService.findPage(pageNo, pageSize, user);
     }
-	
+
+    @RequestMapping("/findUnpayOrders")
+	public List<TbOrder> findUnpayOrders(){
+		String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+		System.out.println(userId);
+		return userService.findUnpayOrders(userId);
+	}
+
+
+	@RequestMapping("/findMyOrders")
+	public List<TbOrder> findMyOrders(){
+		String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+		System.out.println(userId);
+		return userService.findMyOrders(userId);
+	}
+
+
+	@RequestMapping("/findAddress")
+	public List<TbAddress> findAddress() {
+		String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+		return userService.findAddress(userId);
+	}
+	//删除地址
+	@RequestMapping("/deleteAddress")
+	public Result deleteAddress(@RequestParam(value = "index") Integer index){
+		System.out.println(index);
+		String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+		int i= userService.deleteAddress(index,userId);
+		if(i>=0){
+			return new Result(true,"删除成功");
+		}else {
+			return new Result(false,"删除失败");
+		}
+	}
+	//新增地址
+	@RequestMapping("/addAddress")
+	public Result addAddress(@RequestBody TbAddress item){
+		String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+		int i=userService.addAddress(userId,item);
+		if(i!=-1){
+			return new Result(true,"添加地址成功");
+		}else {
+			return new Result(false,"添加地址失败");
+		}
+	}
+	//设置地址默认值
+	@RequestMapping("/setDefaultAddress")
+	public void setDefaultAddress(@RequestParam(value = "index") Integer index){
+        System.out.println(index);
+		String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+		try {
+			userService.setDefaultAddress(index,userId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	//根据id查询地址
+	@RequestMapping("/findOneAddress")
+	public TbAddress findOneAddress(@RequestParam(value = "id") Long id){
+		System.out.println(id);
+		return userService.findOneAddress(id);
+	}
+	//修改地址
+	@RequestMapping("/updateAddress")
+	public Result updateAddress(@RequestBody TbAddress item){
+		int i= userService.updateAddress(item);
+		if(i!=-1){
+			return new Result(true,"修改成功");
+		}else {
+			return new Result(false,"修改失败");
+		}
+	}
+	//注册个人信息
+	@RequestMapping("/addUserInfo")
+	public Result register(@RequestBody TbUser userInfo){
+		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+		try {
+			userService.register(userInfo,userName);
+			return new Result(true,"添加成功");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new Result(false,"添加失败");
+		}
+	}
 }

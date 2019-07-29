@@ -224,4 +224,5 @@ public class TbPayLog implements Serializable {
     public void setPayType(String payType) {
         this.payType = payType;
     }
+
 }

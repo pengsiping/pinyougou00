@@ -26,6 +26,7 @@
     </bean>
 
     <bean class="tk.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!--<property name="basePackage" value="com.pinyougou.pojo"></property>-->
         <property name="basePackage" value="com.pinyougou.mapper"></property>
         <property name="properties">
             <value>mappers=tk.mybatis.mapper.common.Mapper</value>

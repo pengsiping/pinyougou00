@@ -9,7 +9,7 @@
   <select id="selectForFloorTitle" resultType="com.pinyougou.pojo.TbItemCat">
     SELECT * FROM tb_item_cat WHERE parent_id = #{id} LIMIT 1,5
   </select>
-  
+
   <resultMap id="BaseResultMap" type="com.pinyougou.pojo.TbItemCat" >
     <!--
       WARNING - @mbg.generated

@@ -47,4 +47,5 @@
 
     <dubbo:consumer timeout="100000"></dubbo:consumer>
 
+    <import resource="applicationContext_redis.xml"/>
 </beans>

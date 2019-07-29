@@ -131,9 +131,9 @@
 
     <!--列表-->
     <div class="sort">
-        <div class="py-container" >
-            <div class="yui3-g SortList " >
-                <div class="yui3-u Left all-sort-list" >
+        <div class="py-container">
+            <div class="yui3-g SortList ">
+                <div class="yui3-u Left all-sort-list">
                     <div class="all-sort-list2">
                         <!--class="item bo"  -->
                         <div class="item bo" v-for="itemCat1 in itemCatList" @mouseover="toggle1()"
@@ -576,10 +576,10 @@
         </div>
     </div>
     <!--楼层-->
-    <div id="floor-1" class="floor" v-for="floorTitle in floorTitleList">
+    <div id="floor-1" class="floor">
         <div class="py-container">
             <div class="title floors">
-                <h3 class="fl">{{floorTitle.name}}</h3>
+                <h3 class="fl">家用电器</h3>
                 <div class="fr">
                     <ul class="sui-nav nav-tabs">
                         <li class="active">
@@ -687,7 +687,7 @@
             </div>
         </div>
     </div>
-    <!--<div id="floor-2" class="floor">
+    <div id="floor-2" class="floor">
         <div class="py-container">
             <div class="title floors">
                 <h3 class="fl">手机通讯</h3>
@@ -800,7 +800,7 @@
                 </div>
             </div>
         </div>
-    </div>-->
+    </div>
     <!--商标-->
     <div class="brand">
         <div class="py-container">
@@ -954,28 +954,28 @@
     </div>
     <!--页面底部END-->
     <!-- 楼层位置 -->
-    <div id="floor-index" class="floor-index" >
-        <ul v-for="(floorTitle,index) in floorTitleList">
+    <div id="floor-index" class="floor-index">
+        <ul>
             <li>
                 <a class="num" href="javascript:;" style="display: none;">1F</a>
-                <a class="word" href="javascript:;" data-id="(index+1)" style="display: block;">{{floorTitle.name}}</a>
+                <a class="word" href="javascript;;" style="display: block;">家用电器</a>
             </li>
-           <!-- <li>
+            <li>
                 <a class="num" href="javascript:;" style="display: none;">2F</a>
-                <a class="word" href="javascript:;" data-id="2" style="display: block;">手机通讯</a>
+                <a class="word" href="javascript;;" style="display: block;">手机通讯</a>
             </li>
             <li>
                 <a class="num" href="javascript:;" style="display: none;">3F</a>
-                <a class="word" href="javascript:;" data-id="3" style="display: block;">电脑办公</a>
+                <a class="word" href="javascript;;" style="display: block;">电脑办公</a>
             </li>
             <li>
                 <a class="num" href="javascript:;" style="display: none;">4F</a>
-                <a class="word" href="javascript:;" data-id="4" style="display: block;">家居家具</a>
+                <a class="word" href="javascript;;" style="display: block;">家居家具</a>
             </li>
             <li>
                 <a class="num" href="javascript:;" style="display: none;">5F</a>
-                <a class="word" href="javascript:;" data-id="5" style="display: block;">运动户外</a>
-            </li>-->
+                <a class="word" href="javascript;;" style="display: block;">运动户外</a>
+            </li>
         </ul>
     </div>
     <!--侧栏面板开始-->
@@ -1141,7 +1141,6 @@
 
     })
 </script>
-
 
 </body>
 <script type="text/javascript" src="js/model/cartModel.js"></script>

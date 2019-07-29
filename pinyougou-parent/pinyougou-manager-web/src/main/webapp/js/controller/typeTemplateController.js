@@ -143,7 +143,24 @@
         removeTableRow:function (index) {
             this.entity.customAttributeItems.splice(index,1);
         },
-
+        upload:function () {
+            let formData = new window.FormData();
+            formData.append('file', document.querySelector('input[type=file]').files[0]);
+            axios({
+                url: '/typeTemplate/upload.shtml',
+                data: formData,
+                method: 'post',
+                header: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }).then((response) => {
+                if (response.data.success) window.location.reload();
+                else alert(response.data.message);
+            })
+                .catch((error) => {
+                    alert(error)
+                })
+        }
 
 
     },

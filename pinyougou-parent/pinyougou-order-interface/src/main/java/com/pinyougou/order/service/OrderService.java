@@ -1,5 +1,6 @@
 package com.pinyougou.order.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import com.pinyougou.pojo.TbOrder;
 
@@ -35,4 +36,14 @@ public interface OrderService extends CoreService<TbOrder> {
     TbPayLog searchPayLogFromRedis(String userId);
 
 	void updateOrderStatus(String out_trade_no, String transaction_id);
+
+    void recoverRedisCartList(String userId, String out_trade_no);
+
+   List<BigDecimal> getSalesLineChart(List<String> daysList);
+
+
+	List<TbOrder> findAllSales();
+	List<TbOrder> findAllSales(String startTime,String endTime);
+
+
 }

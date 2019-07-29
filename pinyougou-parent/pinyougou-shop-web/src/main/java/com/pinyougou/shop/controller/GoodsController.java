@@ -1,15 +1,23 @@
 package com.pinyougou.shop.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
+import com.pinyougou.MessageInfo;
 import com.pinyougou.pojo.TbGoods;
+import com.pinyougou.pojo.TbItem;
 import com.pinyougou.sellergoods.service.GoodsService;
 import entity.Goods;
 import entity.Result;
+import org.apache.rocketmq.client.producer.DefaultMQProducer;
+import org.apache.rocketmq.client.producer.SendResult;
+import org.apache.rocketmq.common.message.Message;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 
 /**
  * controller
@@ -22,13 +30,16 @@ public class GoodsController {
 
 	@Reference
 	private GoodsService goodsService;
+
+	@Autowired
+	private DefaultMQProducer producer;
 	
 	/**
 	 * 返回全部列表
 	 * @return
 	 */
 	@RequestMapping("/findAll")
-	public List<TbGoods> findAll(){			
+	public List<TbGoods> findAll(){
 		return goodsService.findAll();
 	}
 	
@@ -111,5 +122,36 @@ public class GoodsController {
 		System.out.println("测试"+goods.getSellerId());
 		return goodsService.findPage(pageNo, pageSize, goods);
     }
+
+
+
+
+
+    //商品上下架功能
+	@RequestMapping("/updateSaleStatus/{isOnSale}")
+	public Result updateSaleStatus(@PathVariable(value = "isOnSale") String isOnSale, @RequestBody Long[] ids){
+
+		try {
+			goodsService.updateSaleStatus(isOnSale,ids);
+			if("1".equals(isOnSale)){
+				List<TbItem> tbItemListByIds = goodsService.findTbItemListByIds(ids);
+				MessageInfo messageInfo = new MessageInfo("OnSale_Topic","OnSale_genHtml_tag","Goods_isOnSaleStatus",MessageInfo.METHOD_ADD,tbItemListByIds);
+				Message message = new Message(messageInfo.getTopic(),messageInfo.getTags(),messageInfo.getKeys(), JSON.toJSONString(messageInfo).getBytes());
+				SendResult send = producer.send(message);
+				System.out.println(send.getSendStatus());
+			}
+
+			if("0".equals(isOnSale)){
+				MessageInfo messageInfo = new MessageInfo("OnSale_Topic","OnSale_genHtml_tag","Goods_downSaleStatus",MessageInfo.METHOD_DELETE,ids);
+				Message message = new Message(messageInfo.getTopic(),messageInfo.getTags(),messageInfo.getKeys(), JSON.toJSONString(messageInfo).getBytes());
+				SendResult send = producer.send(message);
+				System.out.println(send.getSendStatus());
+			}
+
+			return new Result(true,"已更新上下架信息");
+		} catch (Exception e) {
+			return new Result(false,e.getMessage());
+		}
+	}
 	
 }

@@ -29,14 +29,14 @@ import javax.annotation.Resource;
 
 /**
  * 服务实现层
+ *
  * @author Administrator
  *
  */
 @Service
-public class ItemCatServiceImpl extends CoreServiceImpl<TbItemCat>  implements ItemCatService {
+public class ItemCatServiceImpl extends CoreServiceImpl<TbItemCat> implements ItemCatService {
 
-
-
+	
 	private TbItemCatMapper itemCatMapper;
 
 

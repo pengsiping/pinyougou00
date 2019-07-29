@@ -41,4 +41,9 @@ public interface GoodsService extends CoreService<TbGoods> {
     void updateStatus(String Status,Long[] ids);
 
 	List<TbItem> findTbItemListByIds(Long[] ids);
+
+    void updateSaleStatus(String isOnSale, Long[] ids);
+
+	List<TbGoods> findTbGoodsByIds(Long[] ids);
+
 }

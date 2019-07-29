@@ -4,6 +4,7 @@
         pages: 15,
         pageNo: 1,
         list: [],
+        entity: {},
         ids: [],
         entity: {parentId:0,name:""},
         entity_1: {},
@@ -81,7 +82,7 @@
 
             })
         },
-        findPage:function () {
+         findPage:function () {
             var that = this;
             axios.get('/content/findPage.shtml',{params:{
                 pageNo:this.pageNo
@@ -150,6 +151,9 @@
         },
         doSearch:function(){
             window.location.href="http://localhost:9104/search.html?keyword="+encodeURIComponent(this.keyword);
+        },
+        analyse:function () {
+            axios.get('/analyse/user');
         }
 
 
@@ -162,6 +166,7 @@
         this.searchItemCatList({id:0})
 
         this.findFloorTitle(0);
+        this.analyse();
     }
 
 })

@@ -1,14 +1,20 @@
 package com.pinyougou.manager.sellergoods.controller;
-import java.util.List;
 
-import com.pinyougou.pojo.TbItem;
-import org.springframework.web.bind.annotation.*;
 import com.alibaba.dubbo.config.annotation.Reference;
+import com.github.pagehelper.PageInfo;
+import com.pinyougou.POIUtils;
 import com.pinyougou.pojo.TbItemCat;
 import com.pinyougou.sellergoods.service.ItemCatService;
-
-import com.github.pagehelper.PageInfo;
 import entity.Result;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
+import java.util.List;
 /**
  * controller
  * @author Administrator
@@ -29,8 +35,38 @@ public class ItemCatController {
 	public List<TbItemCat> findAll(){			
 		return itemCatService.findAll();
 	}
-	
-	
+
+	@RequestMapping("/template")
+	public ResponseEntity<byte[]> template() {
+		try {
+			List<TbItemCat> list = new ArrayList<>();
+			list.add(new TbItemCat());
+			byte[] body = POIUtils.exportExcel(list).toByteArray();
+			HttpHeaders headers = new HttpHeaders();
+			headers.add("Content-Disposition", "attachment; filename=Specification.xlsx");
+			headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+			return new ResponseEntity<>(body, headers, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
+		}
+	}
+
+	@RequestMapping("/upload")
+	public Result upload(@RequestParam("file") MultipartFile file){
+		try {
+			List<TbItemCat> list = POIUtils.readExcel(file.getInputStream(),file.getOriginalFilename(),TbItemCat.class);
+			if(list.size() > 0){
+				for (TbItemCat entity : list) {
+					itemCatService.insertSelective(entity);
+				}
+			}
+			return new Result(true,"导入成功");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new Result(false,e.getMessage());
+		}
+	}
 	
 	@RequestMapping("/findPage")
     public PageInfo<TbItemCat> findPage(@RequestParam(value = "pageNo", defaultValue = "1", required = true) Integer pageNo,

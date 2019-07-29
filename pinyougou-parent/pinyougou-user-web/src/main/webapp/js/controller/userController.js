@@ -1,4 +1,4 @@
-﻿Vue.use(VeeValidate, {locale: 'zh_CN'})
+﻿Vue.use(VeeValidate,{locale:'zh_CN'})
 var app = new Vue({
     el: "#app",
     data: {
@@ -8,8 +8,9 @@ var app = new Vue({
         entity: {},
         ids: [],
         searchEntity: {},
-        SmsCode: '',
-        name: '',
+        SmsCode:'',
+        name:'',
+        addresses:[],
         cartList:[],
         totalNum:0,
         totalPrices:0
@@ -43,6 +44,7 @@ var app = new Vue({
                 app.pageNo = curPage;
                 //总页数
                 app.pages = response.data.pages;
+
             });
         },
         //查询所有品牌列表
@@ -120,23 +122,23 @@ var app = new Vue({
             });
         },
 
-        formSubmit: function () {
+        formSubmit:function(){
             this.$validator.validate().then(result=>{
-                if(!result) {
-                alert("格式不正确");
-                } else {
-                this.register();
+                if(!result){
+                    alert("格式不正确");
+                } else{
+                    this.register();
                 }
             })
-
         },
 
 
+
         register: function () {
-            axios.post("user/add/" + app.SmsCode + ".shtml", app.entity).then(function (response) {
-                if (response.data.success) {
+            axios.post("user/add/"+app.SmsCode+".shtml",app.entity).then(function (response) {
+                if(response.data.success) {
                     window.location.href = "home-index.html"
-                } else {
+                } else{
                     app.$validator.errors.add(response.data.errorsList);
                 }
             }).catch(function (error) {
@@ -144,10 +146,10 @@ var app = new Vue({
             })
         },
 
-        getCode: function (phone) {
-            axios.get("user/getCode/" + phone + ".shtml").then(function (response) {
+        getCode:function(phone){
+            axios.get("user/getCode/"+phone+".shtml").then(function (response) {
 
-                alert(response.data.message);
+                    alert(response.data.message);
             })
         },
         getName: function () {
@@ -158,7 +160,24 @@ var app = new Vue({
                 app.name = response.data;
 
             })
+        },
+        addUserInfo:function () {
+            axios.post("/user/addUserInfo.shtml",app.userInfo).then(function (response) {
+                if (response.data) {
+                    alert(response.data.message)
+                }else {
+                    alert(response.data.message)
+                }
+            })
+        },
+        //地址管理查询
+        findAddress:function () {
+            axios.get("/user/findAddress.shtml").then(function (response) {
+                app.addresses=response.data;
+            })
         }
+
+
 
 
     },
@@ -168,6 +187,7 @@ var app = new Vue({
         this.getName();
 
         this.findCartList();
+
 
     }
 
