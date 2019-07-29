@@ -1,4 +1,4 @@
-﻿var app = new Vue({
+var app = new Vue({
     el: "#app",
     data: {
         pages:15,
@@ -10,7 +10,7 @@
     },
     methods: {
         searchList:function (curPage) {
-            axios.post('/order/search.shtml?pageNo='+curPage,this.searchEntity).then(function (response) {
+            axios.post('/order/findOrderTotal.shtml?pageNo='+curPage).then(function (response) {
                 //获取数据
                 app.list=response.data.list;
 
@@ -32,11 +32,11 @@
 
             })
         },
-         findPage:function () {
+        findPage:function () {
             var that = this;
             axios.get('/order/findPage.shtml',{params:{
-                pageNo:this.pageNo
-            }}).then(function (response) {
+                    pageNo:this.pageNo
+                }}).then(function (response) {
                 console.log(app);
                 //注意：this 在axios中就不再是 vue实例了。
                 app.list=response.data.list;
@@ -48,33 +48,8 @@
             })
         },
         //该方法只要不在生命周期的
-        add:function () {
-            axios.post('/order/add.shtml',this.entity).then(function (response) {
-                console.log(response);
-                if(response.data.success){
-                    app.searchList(1);
-                }
-            }).catch(function (error) {
-                console.log("1231312131321");
-            });
-        },
-        update:function () {
-            axios.post('/order/update.shtml',this.entity).then(function (response) {
-                console.log(response);
-                if(response.data.success){
-                    app.searchList(1);
-                }
-            }).catch(function (error) {
-                console.log("1231312131321");
-            });
-        },
-        save:function () {
-            if(this.entity.id!=null){
-                this.update();
-            }else{
-                this.add();
-            }
-        },
+
+
         findOne:function (id) {
             axios.get('/order/findOne/'+id+'.shtml').then(function (response) {
                 app.entity=response.data;
@@ -82,16 +57,7 @@
                 console.log("1231312131321");
             });
         },
-        dele:function () {
-            axios.post('/order/delete.shtml',this.ids).then(function (response) {
-                console.log(response);
-                if(response.data.success){
-                    app.searchList(1);
-                }
-            }).catch(function (error) {
-                console.log("1231312131321");
-            });
-        },
+
         orderDetail:function (id) {
             window.location.href="orderDetail.html?id="+id;
         }
@@ -101,7 +67,7 @@
     },
     //钩子函数 初始化了事件和
     created: function () {
-      
+
         this.searchList(1);
 
     }

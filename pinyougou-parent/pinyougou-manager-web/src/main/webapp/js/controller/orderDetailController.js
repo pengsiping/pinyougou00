@@ -5,7 +5,9 @@
         pageNo:1,
         list:[],
         entity:{},
+        orderItem:{},
         ids:[],
+        searchMap:{},
         searchEntity:{}
     },
     methods: {
@@ -78,6 +80,14 @@
         findOne:function (id) {
             axios.get('/order/findOne/'+id+'.shtml').then(function (response) {
                 app.entity=response.data;
+                app.findOrderItem(id)
+            }).catch(function (error) {
+                console.log("1231312131321");
+            });
+        },
+        findOrderItem:function (orderId) {
+            axios.get('/orderItem/findOne/'+orderId+'.shtml').then(function (response) {
+                app.orderItem=response.data;
             }).catch(function (error) {
                 console.log("1231312131321");
             });
@@ -91,18 +101,17 @@
             }).catch(function (error) {
                 console.log("1231312131321");
             });
-        },
-        orderDetail:function (id) {
-            window.location.href="orderDetail.html?id="+id;
         }
-
 
 
     },
     //钩子函数 初始化了事件和
     created: function () {
       
-        this.searchList(1);
+        //this.searchList(1);
+        var obj = this.getUrlParam();
+        this.searchMap.id=decodeURIComponent(obj.id);
+        this.findOne(this.searchMap.id)
 
     }
 

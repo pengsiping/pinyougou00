@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../js/echarts.js"></script>
+</head>
+<body>
+<div class="card_style layui-col-md5">
+    <div class="layui-card">
+        <div id="pie_echarts" class="layui-card-body" style="width: 100%;height:170%;">
+        </div>
+    </div>
+</div>
+</body>
+<!--<script src="../js/Echarts.min.js"></script>-->
+<script>
+    var myChart = echarts.init(document.getElementById('pie_echarts'));
+    var fate=2;
+    // 指定图表的配置项和数据
+    option = {
+        title: {
+            text: 'bug分布',
+            x: 'left'
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        color: ['#CD5C5C', '#00CED1', '#9ACD32', '#FFC0CB'],
+        stillShowZeroSum: false,
+        series: [
+            {
+                name: 'bug分布',
+                type: 'pie',
+                radius: '80%',
+                center: ['60%', '60%'],
+                data: [
+                    {value: fate, name: '后台_bug'},
+                    {value: 3, name: 'IOS_bug'},
+                    {value: 7, name: 'Android_bug'},
+                    {value: 4, name: 'H5_bug'},
+                ],
+                itemStyle: {
+                    emphasis: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(128, 128, 128, 0.5)'
+                    }
+                }
+            }
+        ]
+    };
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+</script>
+</html>

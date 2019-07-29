@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pinyougou.mapper.OrderTotalMapper" >
+
+    <select id="selectAll" resultType="com.pinyougou.pojo.OrderTotal">
+        SELECT g.id as id,g.seller_id as sellerId,g.goods_name as goodsName,SUM(o.total_fee) as totalFee,SUM(o.num) as num
+        FROM tb_order_item o,tb_goods g WHERE g.id=o.goods_id GROUP BY goods_id
+    </select>
+</mapper>

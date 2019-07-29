@@ -1,4 +1,4 @@
-package com.pinyougou.sellergoods.controller;
+package com.pinyougou.manager.sellergoods.controller;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.*;

@@ -1,14 +1,15 @@
-package com.pinyougou.manager.sellergoods.controller;
+package com.pinyougou.shop.controller;
+
+import com.alibaba.dubbo.config.annotation.Reference;
+import com.github.pagehelper.PageInfo;
+import com.pinyougou.pojo.TbSeckillOrder;
+import com.pinyougou.seckill.service.SeckillOrderService;
+import entity.Result;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
-import com.pinyougou.sellergoods.service.SeckillOrderService;
-import org.springframework.web.bind.annotation.*;
-import com.alibaba.dubbo.config.annotation.Reference;
-import com.pinyougou.pojo.TbSeckillOrder;
-
-
-import com.github.pagehelper.PageInfo;
-import entity.Result;
 /**
  * controller
  * @author Administrator
@@ -102,6 +103,8 @@ public class SeckillOrderController {
     public PageInfo<TbSeckillOrder> findPage(@RequestParam(value = "pageNo", defaultValue = "1", required = true) Integer pageNo,
                                       @RequestParam(value = "pageSize", defaultValue = "10", required = true) Integer pageSize,
                                       @RequestBody TbSeckillOrder seckillOrder) {
+		String name = SecurityContextHolder.getContext().getAuthentication().getName();
+		seckillOrder.setSellerId(name);
         return seckillOrderService.findPage(pageNo, pageSize, seckillOrder);
     }
 	
