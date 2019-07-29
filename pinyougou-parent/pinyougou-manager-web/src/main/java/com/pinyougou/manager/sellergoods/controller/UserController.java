@@ -101,8 +101,12 @@ public class UserController {
      */
     @RequestMapping("/findOne/{id}")
     public TbUser findOne(@PathVariable(value = "id") Long id) {
+
+        int i=3;
         return userService.findOne(id);
     }
+
+
 
     /**
      * 批量删除
