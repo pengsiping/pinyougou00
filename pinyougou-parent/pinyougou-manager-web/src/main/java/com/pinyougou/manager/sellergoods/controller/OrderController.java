@@ -12,6 +12,17 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import com.pinyougou.POIUtils;
+import com.pinyougou.order.service.OrderService;
+import com.pinyougou.pojo.TbOrder;
+import entity.Result;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 /**
  * controller
  * @author Administrator
@@ -35,8 +46,24 @@ public class OrderController {
 	public List<TbOrder> findAll(){			
 		return orderService.findAll();
 	}
-	
-	
+
+
+	@RequestMapping("/orderExport")
+	public ResponseEntity<byte[]> orderExport(){
+		try {
+			List<TbOrder> orders = orderService.findAll();
+			byte[] body = POIUtils.exportExcel(orders).toByteArray();
+			HttpHeaders headers = new HttpHeaders();
+			headers.add("Content-Disposition", "attachment; filename=order.xlsx");
+			headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+			return new ResponseEntity<>(body, headers, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
+		}
+	}
+
+
 	
 	@RequestMapping("/findPage")
     public PageInfo<TbOrder> findPage(@RequestParam(value = "pageNo", defaultValue = "1", required = true) Integer pageNo,
@@ -51,9 +78,7 @@ public class OrderController {
 	 */
 	@RequestMapping("/add")
 	public Result add(@RequestBody TbOrder order){
-		String name = SecurityContextHolder.getContext().getAuthentication().getName();
 		try {
-			order.setUserId(name);
 			orderService.add(order);
 			return new Result(true, "增加成功");
 		} catch (Exception e) {

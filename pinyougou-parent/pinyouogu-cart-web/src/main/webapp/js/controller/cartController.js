@@ -122,7 +122,6 @@ var app = new Vue({
             this.$set(this.order,'receiverAreaName',this.address.address);
             this.$set(this.order,'receiverMobile',this.address.mobile);
             this.$set(this.order,'receiver',this.address.contact);
-
             axios.post("order/add.shtml",this.order).then(function (response) {
                 if(response.data.success){
                     window.location.href="pay.html"

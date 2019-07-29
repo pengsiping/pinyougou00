@@ -1,12 +1,17 @@
 package com.pinyougou.pojo;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.*;
 
 @Table(name = "tb_order")
 public class TbOrder implements Serializable {
+    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
     /**
      * 订单id
      */
@@ -41,6 +46,7 @@ public class TbOrder implements Serializable {
     /**
      * 订单创建时间
      */
+    @DateTimeFormat
     @Column(name = "create_time")
     private Date createTime;
 
@@ -53,6 +59,7 @@ public class TbOrder implements Serializable {
     /**
      * 付款时间
      */
+    @DateTimeFormat
     @Column(name = "payment_time")
     private Date paymentTime;
 
@@ -158,7 +165,19 @@ public class TbOrder implements Serializable {
     @Column(name = "seller_id")
     private String sellerId;
 
+    @Transient  //不需要从数据库进行映射
+    private List<TbOrderItem> tbOrderItems;
+
+    public List<TbOrderItem> getTbOrderItems() {
+        return tbOrderItems;
+    }
+
+    public void setTbOrderItems(List<TbOrderItem> tbOrderItems) {
+        this.tbOrderItems = tbOrderItems;
+    }
+
     private static final long serialVersionUID = 1L;
+
 
     /**
      * 获取订单id

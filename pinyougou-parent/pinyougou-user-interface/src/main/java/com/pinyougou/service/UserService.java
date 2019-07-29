@@ -1,9 +1,13 @@
 package com.pinyougou.service;
 import java.util.List;
+
+import com.pinyougou.pojo.TbAddress;
+import com.pinyougou.pojo.TbOrder;
 import com.pinyougou.pojo.TbUser;
 
 import com.github.pagehelper.PageInfo;
 import com.pinyougou.core.service.CoreService;
+
 /**
  * 服务层接口
  * @author Administrator
@@ -32,4 +36,29 @@ public interface UserService extends CoreService<TbUser> {
 	void getCode(String phone);
 
 	boolean checkCode(String smsCode,String phone);
+	/**
+	 * 查询未付款的订单
+	 * @param userId
+	 * @return
+	 */
+	List<TbOrder> findUnpayOrders(String userId);
+
+
+    List<TbOrder> findMyOrders(String userId);
+
+
+
+    List<TbAddress> findAddress(String userId);
+
+	int deleteAddress(Integer index,String userId);
+
+	int addAddress(String userId,TbAddress item);
+
+	void setDefaultAddress(Integer index,String userId);
+
+	TbAddress findOneAddress(Long id);
+
+	int updateAddress(TbAddress item);
+
+	void register(TbUser userInfo,String userName);
 }

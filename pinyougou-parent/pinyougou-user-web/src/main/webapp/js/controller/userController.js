@@ -9,7 +9,8 @@ var app = new Vue({
         ids: [],
         searchEntity: {},
         SmsCode:'',
-        name:''
+        name:'',
+        addresses:[]
     },
     methods: {
         searchList: function (curPage) {
@@ -21,6 +22,7 @@ var app = new Vue({
                 app.pageNo = curPage;
                 //总页数
                 app.pages = response.data.pages;
+
             });
         },
         //查询所有品牌列表
@@ -106,8 +108,8 @@ var app = new Vue({
                     this.register();
                 }
             })
+        },
 
-    },
 
 
         register: function () {
@@ -128,13 +130,19 @@ var app = new Vue({
                     alert(response.data.message);
             })
         },
-        getName:function(){
-            alert("get");
-            axios.get("login/getName.shtml").then(function (response) {
-
-                alert(response.data);
-                app.name=response.data;
-
+        addUserInfo:function () {
+            axios.post("/user/addUserInfo.shtml",app.userInfo).then(function (response) {
+                if (response.data) {
+                    alert(response.data.message)
+                }else {
+                    alert(response.data.message)
+                }
+            })
+        },
+        //地址管理查询
+        findAddress:function () {
+            axios.get("/user/findAddress.shtml").then(function (response) {
+                 app.addresses=response.data;
             })
         }
 
@@ -144,6 +152,7 @@ var app = new Vue({
     created: function () {
 
         this.getName();
+
 
     }
 
