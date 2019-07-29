@@ -5,17 +5,18 @@ var app = new Vue({
         //item:[],//{'item':orderItem,'spec':''}
         //orderItem:{'itemId':0}
         orderList:[],
+        order:{orderId:''},
         totalNum:0,
         totalMoney:0,
         myOrders:[],
-        name:''
-    },
+        name:'',
+        orderItem:{}
+        },
     methods:{
         findUnPayOrders:function () {
             axios.get('/user/findUnpayOrders.shtml').then(function (response) {
                 if (response.data!=null){
                     app.unPayOrderList= response.data;
-
                 }
             })
         },
@@ -34,7 +35,13 @@ var app = new Vue({
             axios.get("login/getName.shtml").then(function (response) {
                 app.name=response.data;
             })
-        }
+        },
+        submitOrder:function (orderId, totalFee) {
+            alert(totalFee);
+            window.location.href="pay.html?orderId="+orderId+"&totalFee="+totalFee;
+
+        },
+
     },
 
     created:function () {
@@ -42,4 +49,5 @@ var app = new Vue({
         this.findMyOrders();
 
     }
+
 })

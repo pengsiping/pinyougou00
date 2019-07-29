@@ -165,6 +165,17 @@ public class TbOrder implements Serializable {
     @Column(name = "seller_id")
     private String sellerId;
 
+    @Column(name = "order_id_str")
+    private String orderIdStr;
+
+    public String getOrderIdStr() {
+        return orderIdStr;
+    }
+
+    public void setOrderIdStr(String orderIdStr) {
+        this.orderIdStr = orderIdStr;
+    }
+
     @Transient  //不需要从数据库进行映射
     private List<TbOrderItem> tbOrderItems;
 
