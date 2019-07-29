@@ -51,8 +51,8 @@
 
                 <div class="has-feedback">
 
-                    开始时间<input type="date">
-                    结束时间<input type="date">
+                    开始时间<input type="date" v-model="startTime">
+                    结束时间<input type="date" v-model="endTime">
                     <button @click="searchByTime()" class="btn btn-default">查询</button>
                 </div>
             </div>
