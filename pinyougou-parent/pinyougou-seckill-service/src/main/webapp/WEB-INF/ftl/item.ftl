@@ -1143,7 +1143,7 @@
                 <div class="zoom">
                     <!--默认第一个预览-->
                     <div id="preview" class="spec-preview">
-                        <span class="jqzoom"><img jqimg="http://192.168.25.133/group1/M00/00/03/wKgZhVqbqY6APfY1AAGcFHQ7Ggg520.jpg" src="http://192.168.25.133/group1/M00/00/03/wKgZhVqbqY6APfY1AAGcFHQ7Ggg520.jpg" height="400px" width="400px" /></span>
+                        <span class="jqzoom"><img jqimg="http://192.168.25.129/group1/M00/00/03/wKgZhVqbqY6APfY1AAGcFHQ7Ggg520.jpg" src="http://192.168.25.129/group1/M00/00/03/wKgZhVqbqY6APfY1AAGcFHQ7Ggg520.jpg" height="400px" width="400px" /></span>
                     </div>
                     <!--下方的缩略图-->
                     <div class="spec-scroll">

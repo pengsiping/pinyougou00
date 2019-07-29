@@ -6,7 +6,6 @@ var app = new Vue({
         list:[],
         entity:{},
         ids:[],
-
         searchEntity:{},
         cartList:[],
         totalNum:0,
@@ -16,6 +15,25 @@ var app = new Vue({
         order:{paymentType:1}
     },
     methods: {
+        moveToMyFavorites:function (itemId,num) {
+            axios.get("http://localhost:9106/user/moveToMyFavorites.shtml",
+                {
+                    params: {
+                        itemId: itemId,
+                        num: num
+                    },
+                    withCredentials: true
+                }).then(function (response) {
+                if (response.data.success) {
+                    alert(response.data.message);
+                    window.location.href = "http://localhost:9106/home-person-collect.html";
+                } else {
+                    alert("添加失败");
+                }
+
+            })
+        },
+
         findCartList:function(){
             axios.get("cart/findCartList.shtml").then(function (response) {
                 //alert(response.data);

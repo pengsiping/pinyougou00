@@ -38,7 +38,7 @@
     </mvc:annotation-driven>
     <!--配置dubbo的配置项-->
     <dubbo:application name="pinyougou_manager_web"></dubbo:application>
-    <dubbo:registry protocol="zookeeper" address="192.168.25.133" port="2181"></dubbo:registry>
+    <dubbo:registry protocol="zookeeper" address="192.168.25.129" port="2181"></dubbo:registry>
     <!--dubbo注解配置:扫描@Reference所在的包-->
     <dubbo:annotation package="com.pinyougou.manager.sellergoods.controller"></dubbo:annotation>
 

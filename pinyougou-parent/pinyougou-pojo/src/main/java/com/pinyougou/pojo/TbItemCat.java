@@ -1,6 +1,7 @@
 package com.pinyougou.pojo;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.*;
 
 @Table(name = "tb_item_cat")
@@ -30,6 +31,17 @@ public class TbItemCat implements Serializable {
      */
     @Column(name = "type_id")
     private Long typeId;
+
+    @Transient
+    private List<TbItemCat> itemCatList;
+
+    public List<TbItemCat> getItemCatList() {
+        return itemCatList;
+    }
+
+    public void setItemCatList(List<TbItemCat> itemCatList) {
+        this.itemCatList = itemCatList;
+    }
 
     private static final long serialVersionUID = 1L;
 

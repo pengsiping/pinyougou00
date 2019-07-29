@@ -29,7 +29,8 @@ public interface ItemCatService extends CoreService<TbItemCat> {
 	 */
 	PageInfo<TbItemCat> findPage(Integer pageNo,Integer pageSize,TbItemCat ItemCat);
 
-	public List<TbItemCat> findByParentId(Long parentId);
+	public  List<TbItemCat> findByParentId(Long parentId);
 
-	
+
+    List<TbItemCat> findFloorTitle(Long parentId);
 }
