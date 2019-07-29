@@ -1,6 +1,6 @@
 package com.pinyougou.sellergoods.service;
 import java.util.List;
-import com.pinyougou.pojo.TbItemCat;
+import com.pinyougou.pojo.TbBrandApplication;
 
 import com.github.pagehelper.PageInfo;
 import com.pinyougou.core.service.CoreService;
@@ -9,7 +9,7 @@ import com.pinyougou.core.service.CoreService;
  * @author Administrator
  *
  */
-public interface ItemCatService extends CoreService<TbItemCat> {
+public interface BrandApplicationService extends CoreService<TbBrandApplication> {
 	
 	
 	
@@ -17,7 +17,7 @@ public interface ItemCatService extends CoreService<TbItemCat> {
 	 * 返回分页列表
 	 * @return
 	 */
-	 PageInfo<TbItemCat> findPage(Integer pageNo,Integer pageSize);
+	 PageInfo<TbBrandApplication> findPage(Integer pageNo, Integer pageSize);
 	
 	
 
@@ -27,10 +27,7 @@ public interface ItemCatService extends CoreService<TbItemCat> {
 	 * @param pageSize 每页记录数
 	 * @return
 	 */
-	PageInfo<TbItemCat> findPage(Integer pageNo,Integer pageSize,TbItemCat ItemCat);
+	PageInfo<TbBrandApplication> findPage(Integer pageNo, Integer pageSize, TbBrandApplication BrandApplication);
 
-	public List<TbItemCat> findByParentId(Long parentId);
-
-
-    List<TbItemCat> findFloorTitle(Long parentId);
+    void updateStatus(String status, Long[] ids);
 }

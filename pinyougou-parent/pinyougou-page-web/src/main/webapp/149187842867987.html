@@ -15,59 +15,46 @@
     <script>
         var sku = [
                         {
-                "id": 149187842868038,
-                "title": "小白 移动3G 16G",
+                "id": 10561614,
+                "title": "iphoneX Plus 移动4G 128G",
                 "price": 0.01,
-                "spec": {"网络":"移动3G","机身内存":"16G"}
+                "spec": {"网络":"移动4G","机身内存":"128G"}
             },
             {
-                "id": 149187842868039,
-                "title": "小白 移动3G 32G",
+                "id": 10561615,
+                "title": "iphoneX Plus 电信4G 128G",
                 "price": 0.01,
-                "spec": {"网络":"移动3G","机身内存":"32G"}
+                "spec": {"网络":"电信4G","机身内存":"128G"}
             },
             {
-                "id": 149187842868040,
-                "title": "小白 移动4G 16G",
+                "id": 10561616,
+                "title": "iphoneX Plus 联通4G 128G",
                 "price": 0.01,
-                "spec": {"网络":"移动4G","机身内存":"16G"}
-            },
-            {
-                "id": 149187842868041,
-                "title": "小白 移动4G 32G",
-                "price": 0.01,
-                "spec":{"网络":"移动4G","机身内存":"32G"}
+                "spec":{"网络":"联通4G","机身内存":"128G"}
             }
         ];
 
         //SKU商品列表
         /* var skuList=[
            {
-               "id":149187842868038,
-               "title":"小白 移动3G 16G",
+               "id":10561614,
+               "title":"iphoneX Plus 移动4G 128G",
                "price":0.01,
-               "spec": {"网络":"移动3G","机身内存":"16G"}
+               "spec": {"网络":"移动4G","机身内存":"128G"}
            } ,
 
            {
-               "id":149187842868039,
-               "title":"小白 移动3G 32G",
+               "id":10561615,
+               "title":"iphoneX Plus 电信4G 128G",
                "price":0.01,
-               "spec": {"网络":"移动3G","机身内存":"32G"}
+               "spec": {"网络":"电信4G","机身内存":"128G"}
            } ,
 
            {
-               "id":149187842868040,
-               "title":"小白 移动4G 16G",
+               "id":10561616,
+               "title":"iphoneX Plus 联通4G 128G",
                "price":0.01,
-               "spec": {"网络":"移动4G","机身内存":"16G"}
-           } ,
-
-           {
-               "id":149187842868041,
-               "title":"小白 移动4G 32G",
-               "price":0.01,
-               "spec": {"网络":"移动4G","机身内存":"32G"}
+               "spec": {"网络":"联通4G","机身内存":"128G"}
            }
 
        ];*/
@@ -189,15 +176,15 @@
             <div class="crumb-wrap">
                 <ul class="sui-breadcrumb">
                     <li>
-                        <a href="#">家用电器</a>
+                        <a href="#">手机</a>
                     </li>
                     <li>
-                        <a href="#">生活电器</a>
+                        <a href="#">手机通讯</a>
                     </li>
                     <li>
-                        <a href="#">电风扇</a>
+                        <a href="#">手机</a>
                     </li>
-                    <li class="active">小白</li>
+                    <li class="active">iphoneX Plus</li>
                 </ul>
             </div>
             <!--product-info-->
@@ -208,7 +195,7 @@
                         <!--默认第一个预览-->
                         <div id="preview" class="spec-preview">
                         <span class="jqzoom">
-                                <img jqimg="http://192.168.25.129/group1/M00/00/00/wKgZhV0gEKSAIaoWAAAGFY9_z-o722.png" src="http://192.168.25.129/group1/M00/00/00/wKgZhV0gEKSAIaoWAAAGFY9_z-o722.png" width="400px"
+                                <img jqimg="http://192.168.25.133/group1/M00/00/00/wKgZhV0YTF6ASm0PAAUmvHpR_f0262.jpg" src="http://192.168.25.133/group1/M00/00/00/wKgZhV0YTF6ASm0PAAUmvHpR_f0262.jpg" width="400px"
                                      height="400px"/>
                         </span>
                         </div>
@@ -218,7 +205,7 @@
                             <!--左右按钮-->
                             <div class="items">
                                 <ul>
-                                        <li><img src="http://192.168.25.129/group1/M00/00/00/wKgZhV0gEKSAIaoWAAAGFY9_z-o722.png" bimg="http://192.168.25.129/group1/M00/00/00/wKgZhV0gEKSAIaoWAAAGFY9_z-o722.png" onmousemove="preview(this)"/></li>
+                                        <li><img src="http://192.168.25.133/group1/M00/00/00/wKgZhV0YTF6ASm0PAAUmvHpR_f0262.jpg" bimg="http://192.168.25.133/group1/M00/00/00/wKgZhV0YTF6ASm0PAAUmvHpR_f0262.jpg" onmousemove="preview(this)"/></li>
                                 </ul>
                             </div>
                             <a class="next">&gt;</a>
@@ -229,7 +216,7 @@
                     <div class="sku-name">
                         <h4>{{sku.title}}</h4>
                     </div>
-                    <div class="news"><span>小店</span></div>
+                    <div class="news"><span>非常好用</span></div>
                     <div class="summary">
                         <div class="summary-wrap">
                             <div class="fl title">
@@ -284,16 +271,19 @@
                                 </dt>
                                 <dd>
                                         <a href="javascript:;"
-                                           :class="{selected:isSelect('网络','移动3G')}"
-                                           @click="selectSpec('网络','移动3G')">移动3G<span
-                                                    title="点击取消选择">&nbsp;</span></a>
-                                        <a href="javascript:;"
                                            :class="{selected:isSelect('网络','移动4G')}"
                                            @click="selectSpec('网络','移动4G')">移动4G<span
                                                     title="点击取消选择">&nbsp;</span></a>
+                                        <a href="javascript:;"
+                                           :class="{selected:isSelect('网络','电信4G')}"
+                                           @click="selectSpec('网络','电信4G')">电信4G<span
+                                                    title="点击取消选择">&nbsp;</span></a>
+                                        <a href="javascript:;"
+                                           :class="{selected:isSelect('网络','联通4G')}"
+                                           @click="selectSpec('网络','联通4G')">联通4G<span
+                                                    title="点击取消选择">&nbsp;</span></a>
                                 </dd>
                             </dl>
-
                         <div id="specification" class="summary-wrap clearfix">
                             <dl>
                                 <dt>
@@ -303,12 +293,8 @@
                                 </dt>
                                 <dd>
                                         <a href="javascript:;"
-                                           :class="{selected:isSelect('机身内存','16G')}"
-                                           @click="selectSpec('机身内存','16G')">16G<span
-                                                    title="点击取消选择">&nbsp;</span></a>
-                                        <a href="javascript:;"
-                                           :class="{selected:isSelect('机身内存','32G')}"
-                                           @click="selectSpec('机身内存','32G')">32G<span
+                                           :class="{selected:isSelect('机身内存','128G')}"
+                                           @click="selectSpec('机身内存','128G')">128G<span
                                                     title="点击取消选择">&nbsp;</span></a>
                                 </dd>
                             </dl>
@@ -328,7 +314,7 @@
                             <div class="fl">
                                 <ul class="btn-choose unstyled">
                                     <li>
-                                        <a  target="_blank"
+                                        <a href="cart.html" target="_blank"
                                            class="sui-btn  btn-danger addshopcar" @click="addCart()">加入购物车</a>
                                     </li>
                                 </ul>
@@ -550,21 +536,23 @@
                         <div class="tab-content tab-wraped">
                             <div id="one" class="tab-pane active">
                                 <div class="intro-detail">
-                                    无
+                                    <h1>
+	<span style="color:#E53333;">全屏显示无刘海</span> 
+</h1>
                                 </div>
                             </div>
                             <div id="two" class="tab-pane">
-                                <p>无</p>
+                                <p>耳机充电器盒子</p>
                             </div>
                             <div id="three" class="tab-pane">
-                                <p>无</p>
+                                <p>1年保修</p>
                             </div>
                             <div id="four" class="tab-pane">
                                 <p>商品评价</p>
                             </div>
                             <div id="five" class="tab-pane">
-                                        <p>内存大小:16G</p>
-                                        <p>颜色:白色</p>
+                                        <p>内存大小:128G</p>
+                                        <p>颜色:黑色</p>
                             </div>
                         </div>
                     </div>

@@ -6,16 +6,59 @@
         list: [],
         entity: {},
         ids: [],
+        entity: {parentId:0,name:""},
+        entity_1: {},
+        entity_2: {},
         searchEntity: {},
         contentList: [],
-        keyword: '',
-        itemCat:{itemCatList:[]},
-        itemCat1:{itemCatList1:[{'name':'分类'},{'name':'精品'}]},
-        flag:''
-
-    }
-    ,
+        itemCatList:[],
+        floorTitleList:[],
+        flag:false,
+        keyword: ''
+    },
     methods: {
+        findFloorTitle:function (parentId) {
+            axios.get('/itemCat/findFloorTitle/' + parentId + '.shtml').then(function (response) {
+                app.floorTitleList = response.data;
+
+            }).catch(function (error) {
+                console.log("1231312131321");
+            });
+        },
+
+        toggle1:function(){
+            this.flag=true;
+        },
+        toggle2:function(){
+            this.flag=false;
+        },
+
+        searchItemCatList: function (p_entity) {
+            if (this.grade == 1) {
+                this.entity_1 = {};
+                this.entity_2 = {};
+            }
+            if(this.grade==2){
+                this.entity_1=p_entity;
+                this.entity_2={};
+            }
+            if(this.grade==3){
+                this.entity_2=p_entity;
+            }
+            this.findParentId(p_entity.id);
+
+        },
+
+        findParentId: function (parentId) {
+            axios.get('/itemCat/findByParentId/' + parentId + '.shtml').then(function (response) {
+                app.itemCatList = response.data;
+                app.entity.parentId=parentId;
+
+            }).catch(function (error) {
+                console.log("1231312131321");
+            });
+        },
+
         searchList:function (curPage) {
             axios.post('/content/search.shtml?pageNo='+curPage,this.searchEntity).then(function (response) {
                 //获取数据
@@ -114,11 +157,15 @@
         }
 
 
+
     },
     //钩子函数 初始化了事件和
     created: function () {
       
         this.findAllCategory(1);
+        this.searchItemCatList({id:0})
+
+        this.findFloorTitle(0);
         this.analyse();
     }
 

@@ -1,7 +1,9 @@
 package com.pinyougou.sellergoods.service.impl;
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired; 
+import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
@@ -80,5 +82,26 @@ public class BrandServiceImpl extends CoreServiceImpl<TbBrand>  implements Brand
 
         return pageInfo;
     }
-	
+
+    @Override
+    public Set<String> findFirstChar() {
+        List<TbBrand> brandList = brandMapper.selectAll();
+        Set<String> set = new HashSet<>();
+        for (TbBrand tbBrand : brandList) {
+            set.add(tbBrand.getFirstChar());
+        }
+        //System.out.println(set);
+        return set;
+    }
+
+    @Override
+    public List<TbBrand> findBrandByFirstChar(String firstChar) {
+	    TbBrand brand = new TbBrand();
+	    brand.setFirstChar(firstChar);
+        List<TbBrand> brandList = brandMapper.select(brand);
+
+
+        return brandList;
+    }
+
 }

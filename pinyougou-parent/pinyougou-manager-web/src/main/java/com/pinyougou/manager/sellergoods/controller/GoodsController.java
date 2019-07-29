@@ -135,9 +135,16 @@ public class GoodsController {
 			goodsService.updateStatus(status,ids);
 			if("1".equals(status)){
 				List<TbItem> tbItemListByIds = goodsService.findTbItemListByIds(ids);
-				MessageInfo messageInfo= new MessageInfo("Goods_Topic","Goods_update_tag","updateStatus",MessageInfo.METHOD_UPDATE,tbItemListByIds);
+				MessageInfo messageInfo= new MessageInfo("Goods_Topic",
+														"Goods_update_tag",
+														"updateStatus",
+														MessageInfo.METHOD_UPDATE,
+														tbItemListByIds);
 
-				SendResult result = producer.send(new Message(messageInfo.getTopic(), messageInfo.getTags(), messageInfo.getKeys(), JSON.toJSONString(messageInfo).getBytes()));
+				SendResult result = producer.send(new Message(messageInfo.getTopic(),
+															  messageInfo.getTags(),
+															  messageInfo.getKeys(),
+															  JSON.toJSONString(messageInfo).getBytes()));
 
 				System.out.println(">>>"+result.getSendStatus());
 

@@ -13,6 +13,22 @@
         searchEntity: {}
     },
     methods: {
+        searchList: function (p_entity) {
+            if (this.grade == 1) {
+                this.entity_1 = {};
+                this.entity_2 = {};
+            }
+            if(this.grade==2){
+                this.entity_1=p_entity;
+                this.entity_2={};
+            }
+            if(this.grade==3){
+                this.entity_2=p_entity;
+            }
+            this.findParentId(p_entity.id);
+
+        },
+
          /*searchList:function (curPage) {
              axios.post('/itemCat/search.shtml?pageNo='+curPage,this.searchEntity).then(function (response) {
                  //获取数据
