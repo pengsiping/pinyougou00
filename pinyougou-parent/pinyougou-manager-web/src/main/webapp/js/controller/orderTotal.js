@@ -7,8 +7,8 @@ var app = new Vue({
         entity:{},
         ids:[],
         searchEntity:{},
-        startTime:{},
-        endTime:{}
+        startTime:'',
+        endTime:''
     },
     methods: {
         searchList:function (curPage) {
