@@ -19,24 +19,24 @@ public class SpecificationOptionController {
 
 	@Reference
 	private SpecificationOptionService specificationOptionService;
-	
+
 	/**
 	 * 返回全部列表
 	 * @return
 	 */
 	@RequestMapping("/findAll")
-	public List<TbSpecificationOption> findAll(){			
+	public List<TbSpecificationOption> findAll(){
 		return specificationOptionService.findAll();
 	}
-	
-	
-	
+
+
+
 	@RequestMapping("/findPage")
     public PageInfo<TbSpecificationOption> findPage(@RequestParam(value = "pageNo", defaultValue = "1", required = true) Integer pageNo,
                                       @RequestParam(value = "pageSize", defaultValue = "10", required = true) Integer pageSize) {
         return specificationOptionService.findPage(pageNo, pageSize);
     }
-	
+
 	/**
 	 * 增加
 	 * @param specificationOption
@@ -52,7 +52,7 @@ public class SpecificationOptionController {
 			return new Result(false, "增加失败");
 		}
 	}
-	
+
 	/**
 	 * 修改
 	 * @param specificationOption
@@ -67,8 +67,8 @@ public class SpecificationOptionController {
 			e.printStackTrace();
 			return new Result(false, "修改失败");
 		}
-	}	
-	
+	}
+
 	/**
 	 * 获取实体
 	 * @param id
@@ -76,9 +76,9 @@ public class SpecificationOptionController {
 	 */
 	@RequestMapping("/findOne/{id}")
 	public TbSpecificationOption findOne(@PathVariable(value = "id") Long id){
-		return specificationOptionService.findOne(id);		
+		return specificationOptionService.findOne(id);
 	}
-	
+
 	/**
 	 * 批量删除
 	 * @param ids
@@ -88,14 +88,14 @@ public class SpecificationOptionController {
 	public Result delete(@RequestBody Long[] ids){
 		try {
 			specificationOptionService.delete(ids);
-			return new Result(true, "删除成功"); 
+			return new Result(true, "删除成功");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new Result(false, "删除失败");
 		}
 	}
-	
-	
+
+
 
 	@RequestMapping("/search")
     public PageInfo<TbSpecificationOption> findPage(@RequestParam(value = "pageNo", defaultValue = "1", required = true) Integer pageNo,
@@ -103,5 +103,5 @@ public class SpecificationOptionController {
                                       @RequestBody TbSpecificationOption specificationOption) {
         return specificationOptionService.findPage(pageNo, pageSize, specificationOption);
     }
-	
+
 }

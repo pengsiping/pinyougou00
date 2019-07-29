@@ -31,6 +31,7 @@ var app = new Vue({
                 app.pageNo=curPage;
                 //总页数
                     app.showGoods()
+
                 app.pages=response.data.pages;
             }
 
@@ -40,6 +41,7 @@ var app = new Vue({
 
 
         showGoods:function(){
+
             var myChart = echarts.init(document.getElementById('pie_echarts'));
             option={
                 title: {
@@ -58,7 +60,7 @@ var app = new Vue({
                         type: 'pie',
                         radius: '80%',
                         center: ['60%', '60%'],
-                        data: JSON.parse(app.dataValue)
+                        data: app.dataValue
                         ,
                         itemStyle: {
                             emphasis: {
