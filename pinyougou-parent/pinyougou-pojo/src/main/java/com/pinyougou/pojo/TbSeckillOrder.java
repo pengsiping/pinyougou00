@@ -1,5 +1,10 @@
 package com.pinyougou.pojo;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import entity.LongJsonDeserializer;
+import entity.LongJsonSerializer;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -12,6 +17,8 @@ public class TbSeckillOrder implements Serializable {
      */
     @Id
     @Column(name = "id")
+    @JsonDeserialize(using = LongJsonDeserializer.class)
+    @JsonSerialize(using = LongJsonSerializer.class)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

@@ -37,13 +37,13 @@ public class OrderController {
 
 	@Reference
 	private OrderTotalService orderTotalService;
-	
+
 	/**
 	 * 返回全部列表
 	 * @return
 	 */
 	@RequestMapping("/findAll")
-	public List<TbOrder> findAll(){			
+	public List<TbOrder> findAll(){
 		return orderService.findAll();
 	}
 
@@ -64,13 +64,13 @@ public class OrderController {
 	}
 
 
-	
+
 	@RequestMapping("/findPage")
     public PageInfo<TbOrder> findPage(@RequestParam(value = "pageNo", defaultValue = "1", required = true) Integer pageNo,
                                       @RequestParam(value = "pageSize", defaultValue = "10", required = true) Integer pageSize) {
         return orderService.findPage(pageNo, pageSize);
     }
-	
+
 	/**
 	 * 增加
 	 * @param order
@@ -86,7 +86,7 @@ public class OrderController {
 			return new Result(false, "增加失败");
 		}
 	}
-	
+
 	/**
 	 * 修改
 	 * @param order
@@ -101,8 +101,8 @@ public class OrderController {
 			e.printStackTrace();
 			return new Result(false, "修改失败");
 		}
-	}	
-	
+	}
+
 	/**
 	 * 获取实体
 	 * @param id
@@ -110,9 +110,9 @@ public class OrderController {
 	 */
 	@RequestMapping("/findOne/{id}")
 	public TbOrder findOne(@PathVariable(value = "id") Long id){
-		return orderService.findOne(id);		
+		return orderService.findOne(id);
 	}
-	
+
 	/**
 	 * 批量删除
 	 * @param ids
@@ -122,14 +122,14 @@ public class OrderController {
 	public Result delete(@RequestBody Long[] ids){
 		try {
 			orderService.delete(ids);
-			return new Result(true, "删除成功"); 
+			return new Result(true, "删除成功");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new Result(false, "删除失败");
 		}
 	}
-	
-	
+
+
 
 	@RequestMapping("/search")
     public PageInfo<TbOrder> findPage(@RequestParam(value = "pageNo", defaultValue = "1", required = true) Integer pageNo,
@@ -139,10 +139,15 @@ public class OrderController {
     }
 
 	@RequestMapping("/findOrderTotal")
-	public PageInfo<OrderTotal> findOrderTotal(@RequestParam(value = "pageNo", defaultValue = "1", required = true) Integer pageNo,
-									  @RequestParam(value = "pageSize", defaultValue = "10", required = true) Integer pageSize
+	public PageInfo<OrderTotal> findOrderTotal( String startTime,
+									  String endTime
 									  ) {
-		return orderTotalService.selectAll(pageNo, pageSize);
+		return orderTotalService.selectAll(startTime,endTime);
 	}
-	
+
+	@RequestMapping("/findOrder")
+	public PageInfo<OrderTotal> findAllOrder() {
+		return orderTotalService.findOrder();
+	}
+
 }

@@ -46,4 +46,7 @@ public interface OrderService extends CoreService<TbOrder> {
 	List<TbOrder> findAllSales(String startTime,String endTime);
 
 
+	PageInfo<TbOrder> findAllOrder();
+
+	PageInfo<TbOrder> findOrderInSomeTime(String startTime,String endTime);
 }

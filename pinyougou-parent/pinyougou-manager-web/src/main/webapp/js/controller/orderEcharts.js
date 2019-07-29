@@ -7,20 +7,70 @@ var app = new Vue({
         entity:{},
         ids:[],
         searchEntity:{},
+        goods:{value:0,name:''},
+        dataValue:[],
         startTime:'',
         endTime:''
     },
     methods: {
         searchList:function (curPage) {
+
             axios.post('/order/findOrder.shtml').then(function (response) {
                 //获取数据
                 app.list=response.data.list;
+                for(var i=0;i<response.data.list.length;i++){
+                    app.goods.value=response.data.list[i].num
+                    app.goods.name=response.data.list[i].goodsName
+                    var good=JSON.stringify(app.goods)
+                    app.dataValue.push(JSON.parse(good))
+                }
 
+
+                //myChart1.setOption(option);
                 //当前页
                 app.pageNo=curPage;
                 //总页数
+                    app.showGoods()
                 app.pages=response.data.pages;
-            });
+            }
+
+            );
+
+        },
+
+
+        showGoods:function(){
+            var myChart = echarts.init(document.getElementById('pie_echarts'));
+            option={
+                title: {
+                    text: 'bug分布',
+                    x: 'left'
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b} : {c} ({d}%)"
+                },
+                color: ['#CD5C5C', '#00CED1', '#9ACD32', '#FFC0CB'],
+                stillShowZeroSum: false,
+                series: [
+                    {
+                        name: 'bug分布',
+                        type: 'pie',
+                        radius: '80%',
+                        center: ['60%', '60%'],
+                        data: JSON.parse(app.dataValue)
+                        ,
+                        itemStyle: {
+                            emphasis: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(128, 128, 128, 0.5)'
+                            }
+                        }
+                    }
+                ]
+            };
+            myChart.setOption(option);
         },
 
         searchByTime:function () {

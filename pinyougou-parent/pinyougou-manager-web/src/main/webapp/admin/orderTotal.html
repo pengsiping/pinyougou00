@@ -51,12 +51,13 @@
 
                 <div class="has-feedback">
 
-                    <button class="btn btn-default">查询</button>
+                    开始时间<input type="text">
+                    结束时间<input type="text">
+                    <button @click="searchByTime()" class="btn btn-default">查询</button>
                 </div>
             </div>
             <!--工具栏/-->
 
-            {{list}}
             <!--数据列表-->
             <table id="dataList" class="table table-bordered table-striped table-hover dataTable">
                 <thead>

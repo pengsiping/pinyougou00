@@ -4,6 +4,13 @@
 
     <select id="selectAll" resultType="com.pinyougou.pojo.OrderTotal">
         SELECT g.id as id,g.seller_id as sellerId,g.goods_name as goodsName,SUM(o.total_fee) as totalFee,SUM(o.num) as num
-        FROM tb_order_item o,tb_goods g WHERE g.id=o.goods_id GROUP BY goods_id
+        FROM tb_order_item o,tb_goods g,tb_order d
+        WHERE g.id=o.goods_id and d.order_id=o.order_id GROUP BY o.goods_id
+    </select>
+
+    <select id="selectByTime" parameterType="java.lang.String" resultType="com.pinyougou.pojo.OrderTotal">
+        SELECT g.id as id,g.seller_id as sellerId,g.goods_name as goodsName,SUM(o.total_fee) as totalFee,SUM(o.num) as num
+        FROM tb_order_item o,tb_goods g,tb_order d
+        WHERE d.payment_time between #{startTime} and #{endTime} and g.id=o.goods_id and d.order_id=o.order_id GROUP BY o.goods_id
     </select>
 </mapper>
