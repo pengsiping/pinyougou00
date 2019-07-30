@@ -372,7 +372,6 @@ public class UserServiceImpl extends CoreServiceImpl<TbUser>  implements UserSer
 			tbOrders= tbOrderMapper.selectByExample(example);
 			if(tbOrders!=null&&tbOrders.size()>0){
 				for (TbOrder order : tbOrders) {
-					order.setOrderIdStr(order.getOrderId().toString());
 					//TbOrderItem tbOrderItem=new TbOrderItem();
 					//tbOrderItem.setOrderId(order.getOrderId());
 					Example example1=new Example(TbOrderItem.class);
@@ -606,4 +605,21 @@ public class UserServiceImpl extends CoreServiceImpl<TbUser>  implements UserSer
 		//判断当商品被加入购物车时，从redis中删除
 		return footList;
 	}
+
+    private String[] source_type = {"PC","H5","Android","IOS","WeChat"};
+
+    @Override
+    public List<Map<String, String>> count(String type) {
+        List<Map<String, String>> list = new ArrayList<>();
+        for (int i = 1; i <= 5; i++) {
+			TbUser tbUser = new TbUser();
+			tbUser.setSourceType(i+"");
+			int count = userMapper.selectCount(tbUser);
+			Map<String, String> map = new HashMap<>();
+			map.put("name",source_type[i]);
+			map.put("value", count+"");
+			list.add(map);
+		}
+        return list;
+    }
 }
