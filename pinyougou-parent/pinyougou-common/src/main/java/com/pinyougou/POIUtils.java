@@ -166,11 +166,11 @@ public class POIUtils {
                         Cell cell = row.getCell(j);
                         if (null == cell) continue;    // 为空时，下一列
                         Object cellValue = getCellValue(cell);
-                        if(cellValue==null||cellValue=="")continue;
+                        if (cellValue == null || cellValue == "") continue;
                         String methodName = "set" + capitalize(fields[j].getName());
                         Method method = null;
                         try {
-                            method = clazz.getDeclaredMethod(methodName,fields[j].getType());
+                            method = clazz.getDeclaredMethod(methodName, fields[j].getType());
                         } catch (NoSuchMethodException e) {    //	不存在该方法，查看父类是否存在。此处只支持一级父类，若想支持更多，建议使用while循环
                             if (null != clazz.getSuperclass()) {
                                 method = clazz.getSuperclass().getDeclaredMethod(methodName);
