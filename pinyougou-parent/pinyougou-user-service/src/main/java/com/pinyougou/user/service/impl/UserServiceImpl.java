@@ -1,7 +1,9 @@
 package com.pinyougou.user.service.impl;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import com.pinyougou.SysConstants;
 import com.pinyougou.mapper.*;
 import com.pinyougou.pojo.*;
 import com.alibaba.dubbo.config.annotation.Service;
@@ -373,4 +375,85 @@ public class UserServiceImpl extends CoreServiceImpl<TbUser>  implements UserSer
         user.setHeadPic(userInfo.getHeadPic());//设置头像
 		tbUserMapper.updateByPrimaryKey(user);
     }
+	/**
+	 * 商品详情页面加载生成传递goodsId
+	 * 记录所有用户浏览过的商品详细信息到我的足迹中
+	 * 足迹所要获取到的数据与我的收藏相似
+	 *
+	 * @return goodsId  tb_Goods表的id
+	 */
+	@Autowired
+	private TbGoodsMapper tbGoodsMapper;
+	@Override
+	public void findMyFootprint(Long goodsId, String userId) {
+		//定义一个list容器，假设有多个浏览商品使用list容器装
+		List<Map<String, Object>> list =null;
+
+		//第一次redis中没有浏览商品缓存时，创建list容器接收数据
+		list  = (List<Map<String, Object>>) redisTemplate.boundHashOps
+				(SysConstants.MY_FOOTPRINT + userId).get("FootList");
+
+		//如果redis中为空
+		if (list == null) {
+			//创建list容器
+			list = new ArrayList<>();
+		}
+
+		//商品详情页数据封装的map容器
+		Map<String, Object> map = new HashMap<>();
+
+		//1.根据goodsId获取itemId（商品id）
+		TbGoods tbGoods = tbGoodsMapper.selectByPrimaryKey(goodsId);
+
+
+		//获取默认的商品id
+		Long itemId = tbGoods.getDefaultItemId();
+
+		//2.根据商品id获取商品对象
+		TbItem tbItem = tbItemMapper.selectByPrimaryKey(itemId);
+
+		//1.获取商品标题
+		String title = tbItem.getTitle();
+
+		//2.获取商品规格
+		String spec = tbItem.getSpec();
+
+		//3.获取商品价钱
+		BigDecimal price = tbItem.getPrice();
+
+		//4.获取商品库存数量
+		Integer num = tbItem.getNum();
+
+		//5.获取商品图片
+		String image = tbItem.getImage();
+
+		//将数据都封装到map中
+		map.put("title", title);
+		map.put("spec", spec);
+		map.put("price", price);
+		map.put("num", num);
+		map.put("image", image);
+		map.put("itemId", itemId);
+
+		list.add(map);
+
+		//将用户浏览的商品详细信息从左到右的形式压入队列中，使用户的名称做标记，此用户就是该队列
+		redisTemplate.boundHashOps(SysConstants.MY_FOOTPRINT + userId).put("FootList", list);
+	}
+	/**
+	 * 从redis中获取用户浏览的商品详细信息
+	 * 商品详细信息从左到右压入队列，取从右取，当商品为空时，则从redis中删除此商品
+	 *
+	 * @param userId
+	 * @return
+	 */
+	@Override
+	public List<Map<String, Object>> findAllFootprint(String userId) {
+		//根据大key与用户名称标识从redis中取出list<Map>
+		List<Map<String, Object>> footList = (List<Map<String, Object>>)
+				redisTemplate.boundHashOps(SysConstants.MY_FOOTPRINT + userId).get("FootList");
+
+		//判断当商品被加入购物车时，从redis中删除
+		return footList;
+	}
 }

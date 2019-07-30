@@ -29,4 +29,5 @@ public class SysConstants {
 
     //秒杀商品的订单的KEY
     public static final String SEC_KILL_ORDER="seckillOrder";
+    public static final String MY_FOOTPRINT = "My_Footprint";
 }

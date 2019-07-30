@@ -1,5 +1,6 @@
 package com.pinyougou.service;
 import java.util.List;
+import java.util.Map;
 
 import com.pinyougou.pojo.TbAddress;
 import com.pinyougou.pojo.TbOrder;
@@ -61,4 +62,8 @@ public interface UserService extends CoreService<TbUser> {
 	int updateAddress(TbAddress item);
 
 	void register(TbUser userInfo,String userName);
+
+    void findMyFootprint(Long goodsId, String userId);
+
+	List<Map<String, Object>> findAllFootprint(String userId);
 }
