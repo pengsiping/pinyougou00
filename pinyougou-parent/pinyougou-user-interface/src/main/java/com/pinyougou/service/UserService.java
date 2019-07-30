@@ -9,6 +9,9 @@ import com.github.pagehelper.PageInfo;
 import com.pinyougou.core.service.CoreService;
 import entity.Cart;
 
+import com.pinyougou.pojo.TbUser;
+
+import java.util.Map;
 /**
  * 服务层接口
  * @author Administrator
@@ -42,6 +45,8 @@ public interface UserService extends CoreService<TbUser> {
 	void getCode(String phone);
 
 	boolean checkCode(String smsCode,String phone);
+
+	Map<String, Object> showChart();
 	/**
 	 * 查询未付款的订单
 	 * @param userId
