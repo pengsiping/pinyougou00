@@ -1,32 +1,14 @@
 package com.pinyougou.user.service.impl;
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
 
-import com.pinyougou.mapper.*;
-import com.pinyougou.pojo.*;
-import com.pinyougou.mapper.TbItemMapper;
-import com.pinyougou.pojo.TbItem;
-import com.pinyougou.pojo.TbOrderItem;
-import com.pinyougou.service.UserService;
-import entity.Cart;
-import org.apache.rocketmq.client.exception.MQBrokerException;
-import org.apache.rocketmq.client.exception.MQClientException;
-import org.apache.rocketmq.client.producer.DefaultMQProducer;
-import org.apache.rocketmq.client.producer.SendResult;
-import org.apache.rocketmq.common.message.Message;
-import org.apache.rocketmq.remoting.exception.RemotingException;
-import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.pinyougou.core.service.CoreServiceImpl;
-import com.pinyougou.mapper.TbAnalysePVMapper;
-import com.pinyougou.mapper.TbUserMapper;
-import com.pinyougou.pojo.TbAnalysePV;
-import com.pinyougou.pojo.TbUser;
+import com.pinyougou.mapper.*;
+import com.pinyougou.pojo.*;
 import com.pinyougou.service.UserService;
+import entity.Cart;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.client.producer.SendResult;
@@ -36,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import tk.mybatis.mapper.entity.Example;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -338,8 +321,6 @@ public class UserServiceImpl extends CoreServiceImpl<TbUser>  implements UserSer
 	@Autowired
 	private TbOrderItemMapper tbOrderItemMapper;
 
-	@Autowired
-	private TbItemMapper tbItemMapper;
 
 	@Override
 	public Map<String, Object> showChart() {
@@ -384,7 +365,6 @@ public class UserServiceImpl extends CoreServiceImpl<TbUser>  implements UserSer
 			tbOrders= tbOrderMapper.selectByExample(example);
 			if(tbOrders!=null&&tbOrders.size()>0){
 				for (TbOrder order : tbOrders) {
-					order.setOrderIdStr(order.getOrderId().toString());
 					//TbOrderItem tbOrderItem=new TbOrderItem();
 					//tbOrderItem.setOrderId(order.getOrderId());
 					Example example1=new Example(TbOrderItem.class);
@@ -421,7 +401,6 @@ public class UserServiceImpl extends CoreServiceImpl<TbUser>  implements UserSer
             tbOrders= tbOrderMapper.selectByExample(example);
             if(tbOrders!=null&&tbOrders.size()>0){
                 for (TbOrder order : tbOrders) {
-					order.setOrderIdStr(order.getOrderId().toString());
                     //TbOrderItem tbOrderItem=new TbOrderItem();
                     //tbOrderItem.setOrderId(order.getOrderId());
                     Example example1=new Example(TbOrderItem.class);
