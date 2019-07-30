@@ -110,8 +110,9 @@ public class SeckillOrderServiceImpl extends CoreServiceImpl<TbSeckillOrder> imp
         List<TbSeckillOrder> all = seckillOrderMapper.selectByExample(example);
         PageInfo<TbSeckillOrder> info = new PageInfo<TbSeckillOrder>(all);
         //序列化再反序列化
-        String s = JSON.toJSONString(info);
-        PageInfo<TbSeckillOrder> pageInfo = JSON.parseObject(s, PageInfo.class);
+        //String s = JSON.toJSONString(info);
+        //PageInfo<TbSeckillOrder> pageInfo = JSON.parseObject(s, PageInfo.class);
+        PageInfo<TbSeckillOrder> pageInfo = info;
 
         return pageInfo;
     }
