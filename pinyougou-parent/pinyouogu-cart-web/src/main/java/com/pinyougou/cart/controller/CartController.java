@@ -66,11 +66,9 @@ public class CartController {
             }
             return redisCartList;
         }
-
-
     }
 
-    @CrossOrigin(origins = "http://localhost:9105",allowCredentials = "true")
+    @CrossOrigin(origins = {"http://localhost:9105","http://localhost:9106"},allowCredentials = "true")
     @RequestMapping("/add")
     public Result addCartList(Long itemId, Integer num, HttpServletRequest request, HttpServletResponse response) {
 

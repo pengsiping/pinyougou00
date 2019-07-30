@@ -26,13 +26,13 @@ public class ItemCatController {
 
 	@Reference
 	private ItemCatService itemCatService;
-	
+
 	/**
 	 * 返回全部列表
 	 * @return
 	 */
 	@RequestMapping("/findAll")
-	public List<TbItemCat> findAll(){			
+	public List<TbItemCat> findAll(){
 		return itemCatService.findAll();
 	}
 
@@ -67,13 +67,13 @@ public class ItemCatController {
 			return new Result(false,e.getMessage());
 		}
 	}
-	
+
 	@RequestMapping("/findPage")
     public PageInfo<TbItemCat> findPage(@RequestParam(value = "pageNo", defaultValue = "1", required = true) Integer pageNo,
                                       @RequestParam(value = "pageSize", defaultValue = "10", required = true) Integer pageSize) {
         return itemCatService.findPage(pageNo, pageSize);
     }
-	
+
 	/**
 	 * 增加
 	 * @param itemCat
@@ -89,7 +89,7 @@ public class ItemCatController {
 			return new Result(false, "增加失败");
 		}
 	}
-	
+
 	/**
 	 * 修改
 	 * @param itemCat
@@ -104,8 +104,8 @@ public class ItemCatController {
 			e.printStackTrace();
 			return new Result(false, "修改失败");
 		}
-	}	
-	
+	}
+
 	/**
 	 * 获取实体
 	 * @param id
@@ -113,9 +113,9 @@ public class ItemCatController {
 	 */
 	@RequestMapping("/findOne/{id}")
 	public TbItemCat findOne(@PathVariable(value = "id") Long id){
-		return itemCatService.findOne(id);		
+		return itemCatService.findOne(id);
 	}
-	
+
 	/**
 	 * 批量删除
 	 * @param ids
@@ -125,14 +125,14 @@ public class ItemCatController {
 	public Result delete(@RequestBody Long[] ids){
 		try {
 			itemCatService.delete(ids);
-			return new Result(true, "删除成功"); 
+			return new Result(true, "删除成功");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new Result(false, "删除失败");
 		}
 	}
-	
-	
+
+
 
 	@RequestMapping("/search")
     public PageInfo<TbItemCat> findPage(@RequestParam(value = "pageNo", defaultValue = "1", required = true) Integer pageNo,
@@ -146,5 +146,5 @@ public class ItemCatController {
 		List<TbItemCat> tbItemCats = itemCatService.findByParentId(parentId);
 		return tbItemCats;
 	}
-	
+
 }

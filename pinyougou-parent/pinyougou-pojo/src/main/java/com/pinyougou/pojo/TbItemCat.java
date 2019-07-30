@@ -32,6 +32,17 @@ public class TbItemCat implements Serializable {
     @Column(name = "type_id")
     private Long typeId;
 
+    @Transient
+    private List<TbItemCat> itemCatList;
+
+    public List<TbItemCat> getItemCatList() {
+        return itemCatList;
+    }
+
+    public void setItemCatList(List<TbItemCat> itemCatList) {
+        this.itemCatList = itemCatList;
+    }
+
     private static final long serialVersionUID = 1L;
 
     @Transient //不需要从数据库映射

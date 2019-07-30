@@ -7,6 +7,7 @@ import com.pinyougou.pojo.TbUser;
 
 import com.github.pagehelper.PageInfo;
 import com.pinyougou.core.service.CoreService;
+import entity.Cart;
 
 import com.pinyougou.pojo.TbUser;
 
@@ -17,9 +18,14 @@ import java.util.Map;
  *
  */
 public interface UserService extends CoreService<TbUser> {
-	
-	
-	
+
+	public List<Cart> addGoodsToCartList(List<Cart> cart, Long itemId, Integer num);
+
+	List<Cart> findCartListFromRedis(String name);
+
+	void saveCartListFormRedis(String name, List<Cart> newCarts);
+
+	List<Cart> mergeCartList(List<Cart> redisCartList, List<Cart> cookieCartList);
 	/**
 	 * 返回分页列表
 	 * @return

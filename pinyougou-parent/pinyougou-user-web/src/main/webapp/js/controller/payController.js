@@ -1,64 +1,39 @@
 var app = new Vue({
-    el: "#app",
-    data: {
-        totalMoney:0,
-        payObject:{}
+    el:"#app",
+    data:{
+        payObject:{}//封装支付的金额 二维码连接 交易订单号
     },
-    methods: {
-        createNative:function(){
-            axios.get("pay/createNative.shtml").then(function (response) {
-                if(response.data){
-                    app.payObject=response.data;
-                    app.payObject.total_fee=app.payObject.total_fee/100;
-                    var qr= new QRious({
-                        element:document.getElementById('qrious'),
-                        size:250,
-                        level:'H',
-                        value:app.payObject.code_url
-                    });
-                    if(qr){
-                        app.queryPayStatus(app.payObject.out_trade_no);
+    methods:{
+        createNative:function (orderId,totalFee) {
+            var that=this;
+            axios.get('/pay/createNative.shtml?orderId='+orderId+'&totalFee='+totalFee).then(
+                function (response) {
+                    //如果有数据
+                    if(response.data){
+                        app.payObject=response.data;
+                        //app.payObject.total_fee=app.payObject.total_fee/100;
+                        //生成二维码
+                        var qr = new QRious({
+                            element:document.getElementById('qrious'),
+                            size:250,
+                            level:'H',
+                            value:app.payObject.code_url
+                        });
+                        //alert(app.payObject.code_url)
                     }
                 }
-            })
-        },
-
-        queryPayStatus:function(out_trade_no){
-            axios.get("pay/queryPayStatus.shtml",{params:{
-                    out_trade_no:out_trade_no
-                }}).then(function (response) {
-                    if(response.data){
-                        if(response.data.success){
-                            window.location.href="paysuccess.html?money="+app.payObject.total_fee;
-                        }else{
-                            if(response.data.message=="超时"){
-                                window.location.href="payfail.html"
-                            }else{
-                                app.queryPayStatus(out_trade_no);
-                            }
-
-                        }
-                    } else{
-                        alert("支付异常");
-                    }
-
-            })
+            )
         }
 
     },
-    //钩子函数 初始化了事件
-    created: function () {
-        var href = window.location.href;
-        if(href.indexOf("pay.html")!=-1){
-            this.createNative();
-        }else{
-           var param= this.getUrlParam();
-           if(param.money){
-               this.totalMoney = param.money;
-           }
-
-        }
-
+    //钩子函数
+    created:function () {
+        var urlParam=this.getUrlParam();
+        this.payObject.out_trade_no=urlParam.orderId;
+        this.payObject.total_fee=urlParam.totalFee;
+        //app.payObject.total_fee=this.getUrlParam("totalFee");
+        //页面一加载就应当调用
+        this.createNative(this.payObject.out_trade_no,this.payObject.total_fee);
     }
 
 })

@@ -1,5 +1,7 @@
 package com.pinyougou.sellergoods.service;
 import java.util.List;
+import java.util.Set;
+
 import com.pinyougou.pojo.TbBrand;
 
 import com.github.pagehelper.PageInfo;
@@ -28,5 +30,8 @@ public interface BrandService extends CoreService<TbBrand> {
 	 * @return
 	 */
 	PageInfo<TbBrand> findPage(Integer pageNo,Integer pageSize,TbBrand Brand);
-	
+
+    Set<String> findFirstChar();
+
+	List<TbBrand> findBrandByFirstChar(String firstChar);
 }

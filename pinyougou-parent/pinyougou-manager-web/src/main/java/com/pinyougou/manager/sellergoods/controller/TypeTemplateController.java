@@ -26,13 +26,13 @@ public class TypeTemplateController {
 
 	@Reference
 	private TypeTemplateService typeTemplateService;
-	
+
 	/**
 	 * 返回全部列表
 	 * @return
 	 */
 	@RequestMapping("/findAll")
-	public List<TbTypeTemplate> findAll(){			
+	public List<TbTypeTemplate> findAll(){
 		return typeTemplateService.findAll();
 	}
 
@@ -67,13 +67,13 @@ public class TypeTemplateController {
 			return new Result(false,e.getMessage());
 		}
 	}
-	
+
 	@RequestMapping("/findPage")
     public PageInfo<TbTypeTemplate> findPage(@RequestParam(value = "pageNo", defaultValue = "1", required = true) Integer pageNo,
                                       @RequestParam(value = "pageSize", defaultValue = "10", required = true) Integer pageSize) {
         return typeTemplateService.findPage(pageNo, pageSize);
     }
-	
+
 	/**
 	 * 增加
 	 * @param typeTemplate
@@ -89,7 +89,7 @@ public class TypeTemplateController {
 			return new Result(false, "增加失败");
 		}
 	}
-	
+
 	/**
 	 * 修改
 	 * @param typeTemplate
@@ -104,8 +104,8 @@ public class TypeTemplateController {
 			e.printStackTrace();
 			return new Result(false, "修改失败");
 		}
-	}	
-	
+	}
+
 	/**
 	 * 获取实体
 	 * @param id
@@ -113,9 +113,9 @@ public class TypeTemplateController {
 	 */
 	@RequestMapping("/findOne/{id}")
 	public TbTypeTemplate findOne(@PathVariable(value = "id") Long id){
-		return typeTemplateService.findOne(id);		
+		return typeTemplateService.findOne(id);
 	}
-	
+
 	/**
 	 * 批量删除
 	 * @param ids
@@ -125,14 +125,14 @@ public class TypeTemplateController {
 	public Result delete(@RequestBody Long[] ids){
 		try {
 			typeTemplateService.delete(ids);
-			return new Result(true, "删除成功"); 
+			return new Result(true, "删除成功");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new Result(false, "删除失败");
 		}
 	}
-	
-	
+
+
 
 	@RequestMapping("/search")
     public PageInfo<TbTypeTemplate> findPage(@RequestParam(value = "pageNo", defaultValue = "1", required = true) Integer pageNo,
@@ -140,5 +140,5 @@ public class TypeTemplateController {
                                       @RequestBody TbTypeTemplate typeTemplate) {
         return typeTemplateService.findPage(pageNo, pageSize, typeTemplate);
     }
-	
+
 }

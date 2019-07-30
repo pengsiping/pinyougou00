@@ -177,7 +177,7 @@ $(function(){
                         <dl>
 							<dt><i>·</i> 订单中心</dt>
 							<dd ><a href="home-index.html"   >我的订单</a></dd>
-							<dd><a href="home-order-pay01.html" >待付款</a></dd>
+							<dd><a href="home-order-pay.html" >待付款</a></dd>
 							<dd><a href="home-order-send.html"  >待发货</a></dd>
 							<dd><a href="home-order-receive.html" >待收货</a></dd>
 							<dd><a href="home-order-evaluate.html" >待评价</a></dd>
@@ -277,14 +277,12 @@ $(function(){
                                <div class="new-photo">
                                     <p>当前头像：</p>
                                     <div class="upload">
-                                        <img id="imgShow_WU_FILE_0" width="100" height="100" :src="image" alt="">
-                                        <input type="file" id="file" v-model="userInfo.headPic"/>
+                                        <img id="imgShow_WU_FILE_0" width="100" height="100" :src="userInfo.headPic" alt="">
+                                        <input type="file" id="file"/>
 										<button class="btn btn-primary" type="button" @click="upload()">
 											上传
 										</button>
-										<span> <button class="btn btn-success" data-dismiss="modal" aria-hidden="true" @click="addImage()">
-                        保存
-                    </button></span>
+
                                     </div><br>
 								</div>
 

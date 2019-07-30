@@ -5,7 +5,9 @@
         pageNo:1,
         list:[],
         entity:{},
+        goods:{},
         ids:[],
+        searchMap:{},
         searchEntity:{}
     },
     methods: {
@@ -76,8 +78,19 @@
             }
         },
         findOne:function (id) {
-            axios.get('/seckillGoods/findOne/'+id+'.shtml').then(function (response) {
+            axios.get('/seckillOrder/findOne/'+id+'.shtml').then(function (response) {
                 app.entity=response.data;
+                var seckillId = response.data.seckillId;
+                app.findGoods(seckillId)
+            }).catch(function (error) {
+                console.log("1231312131321");
+            });
+
+        },
+        findGoods:function (id) {
+            alert(1)
+            axios.get('/seckillGoods/findOne/'+id+'.shtml').then(function (response) {
+                app.goods=response.data;
             }).catch(function (error) {
                 console.log("1231312131321");
             });
@@ -99,7 +112,10 @@
     //钩子函数 初始化了事件和
     created: function () {
       
-        this.searchList(1);
+        //this.searchList(1);
+        var obj = this.getUrlParam();
+        this.searchMap.id=decodeURIComponent(obj.id);
+        this.findOne(this.searchMap.id)
 
     }
 

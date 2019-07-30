@@ -10,9 +10,31 @@ var app = new Vue({
         searchEntity: {},
         SmsCode:'',
         name:'',
-        addresses:[]
+        addresses:[],
+        cartList:[],
+        totalNum:0,
+        totalPrices:0
     },
     methods: {
+        findCartList:function(){
+            axios.get("user/findCartList.shtml").then(function (response) {
+                //alert(response.data);
+                app.cartList=response.data;
+                app.totalNum=0;
+                app.totalPrices=0;
+                for (var i = 0; i < response.data.length; i++) {
+                    var obj = response.data[i]; //Cart
+                    for (var j = 0; j < obj.orderItemList.length; j++) {
+                        //tbOrderItem
+                        var objx=obj.orderItemList[j];
+                        app.totalNum+=objx.num;
+                        app.totalPrices+=objx.totalFee;
+                    }
+                }
+
+            })
+        },
+
         searchList: function (curPage) {
             axios.post('/user/search.shtml?pageNo=' + curPage, this.searchEntity).then(function (response) {
                 //获取数据
@@ -130,6 +152,15 @@ var app = new Vue({
                     alert(response.data.message);
             })
         },
+        getName: function () {
+            alert("get");
+            axios.get("login/getName.shtml").then(function (response) {
+
+                alert(response.data);
+                app.name = response.data;
+
+            })
+        },
         addUserInfo:function () {
             axios.post("/user/addUserInfo.shtml",app.userInfo).then(function (response) {
                 if (response.data) {
@@ -142,9 +173,11 @@ var app = new Vue({
         //地址管理查询
         findAddress:function () {
             axios.get("/user/findAddress.shtml").then(function (response) {
-                 app.addresses=response.data;
+                app.addresses=response.data;
             })
         }
+
+
 
 
     },
@@ -152,6 +185,8 @@ var app = new Vue({
     created: function () {
 
         this.getName();
+
+        this.findCartList();
 
 
     }
