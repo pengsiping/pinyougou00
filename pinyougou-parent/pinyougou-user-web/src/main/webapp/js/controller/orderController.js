@@ -37,6 +37,7 @@ var app = new Vue({
             })
         },
         submitOrder:function (orderId, totalFee) {
+            alert(orderId)
             alert(totalFee);
             window.location.href="pay.html?orderId="+orderId+"&totalFee="+totalFee;
 

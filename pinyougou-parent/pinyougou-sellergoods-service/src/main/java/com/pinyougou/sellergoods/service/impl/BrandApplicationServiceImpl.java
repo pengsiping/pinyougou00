@@ -26,7 +26,7 @@ import java.util.List;
 @Service
 public class BrandApplicationServiceImpl extends CoreServiceImpl<TbBrandApplication>  implements BrandApplicationService {
 
-	
+
 	private TbBrandApplicationMapper brandApplicationMapper;
 
 	@Autowired

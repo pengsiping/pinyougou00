@@ -372,6 +372,7 @@ public class UserServiceImpl extends CoreServiceImpl<TbUser>  implements UserSer
 			tbOrders= tbOrderMapper.selectByExample(example);
 			if(tbOrders!=null&&tbOrders.size()>0){
 				for (TbOrder order : tbOrders) {
+					order.setOrderIdStr(order.getOrderId().toString());
 					//TbOrderItem tbOrderItem=new TbOrderItem();
 					//tbOrderItem.setOrderId(order.getOrderId());
 					Example example1=new Example(TbOrderItem.class);
@@ -408,6 +409,7 @@ public class UserServiceImpl extends CoreServiceImpl<TbUser>  implements UserSer
             tbOrders= tbOrderMapper.selectByExample(example);
             if(tbOrders!=null&&tbOrders.size()>0){
                 for (TbOrder order : tbOrders) {
+					order.setOrderIdStr(order.getOrderId().toString());
                     //TbOrderItem tbOrderItem=new TbOrderItem();
                     //tbOrderItem.setOrderId(order.getOrderId());
                     Example example1=new Example(TbOrderItem.class);
