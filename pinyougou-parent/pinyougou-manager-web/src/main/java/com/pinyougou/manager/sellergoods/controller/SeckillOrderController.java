@@ -1,7 +1,8 @@
 package com.pinyougou.manager.sellergoods.controller;
 import java.util.List;
 
-import com.pinyougou.sellergoods.service.SeckillOrderService;
+//import com.pinyougou.sellergoods.service.SeckillOrderService;
+import com.pinyougou.seckill.service.SeckillOrderService;
 import org.springframework.web.bind.annotation.*;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.pinyougou.pojo.TbSeckillOrder;

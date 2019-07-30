@@ -45,7 +45,7 @@ var app = new Vue({
             var myChart = echarts.init(document.getElementById('pie_echarts'));
             option={
                 title: {
-                    text: 'bug分布',
+                    text: '销量统计',
                     x: 'left'
                 },
                 tooltip: {
@@ -56,7 +56,7 @@ var app = new Vue({
                 stillShowZeroSum: false,
                 series: [
                     {
-                        name: 'bug分布',
+                        name: '销量',
                         type: 'pie',
                         radius: '80%',
                         center: ['60%', '60%'],
