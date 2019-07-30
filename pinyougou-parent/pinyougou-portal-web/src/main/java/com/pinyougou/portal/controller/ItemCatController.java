@@ -111,10 +111,12 @@ public class ItemCatController {
 		return tbItemCats;
 	}
 
-	@RequestMapping("/findItemList/{parentId}")
-	public List<TbItemCat> findItemList(@PathVariable(value="parentId") Long parentId){
-		List<TbItemCat> tbItemCats = itemCatService.findItemList(parentId);
+	@RequestMapping("/findFloorTitle/{parentId}")
+	public List<TbItemCat> findFloorTitle(@PathVariable(value="parentId") Long parentId){
+		List<TbItemCat> tbItemCats = itemCatService.findFloorTitle(parentId);
 		return tbItemCats;
 	}
+
+
 	
 }

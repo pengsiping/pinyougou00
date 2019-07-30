@@ -27,13 +27,13 @@ public class BrandController {
 
 	@Reference
 	private BrandService brandService;
-	
+
 	/**
 	 * 返回全部列表
 	 * @return
 	 */
 	@RequestMapping("/findAll")
-	public List<TbBrand> findAll(){			
+	public List<TbBrand> findAll(){
 		return brandService.findAll();
 	}
 
@@ -52,7 +52,7 @@ public class BrandController {
 			return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
 		}
 	}
-	
+
 	@RequestMapping("/upload")
 	public Result upload(@RequestParam("file") MultipartFile file){
 		try {
@@ -68,13 +68,13 @@ public class BrandController {
 			return new Result(false,e.getMessage());
 		}
 	}
-	
+
 	@RequestMapping("/findPage")
     public PageInfo<TbBrand> findPage(@RequestParam(value = "pageNo", defaultValue = "1", required = true) Integer pageNo,
                                       @RequestParam(value = "pageSize", defaultValue = "10", required = true) Integer pageSize) {
         return brandService.findPage(pageNo, pageSize);
     }
-	
+
 	/**
 	 * 增加
 	 * @param brand
@@ -90,7 +90,7 @@ public class BrandController {
 			return new Result(false, "增加失败");
 		}
 	}
-	
+
 	/**
 	 * 修改
 	 * @param brand
@@ -105,8 +105,8 @@ public class BrandController {
 			e.printStackTrace();
 			return new Result(false, "修改失败");
 		}
-	}	
-	
+	}
+
 	/**
 	 * 获取实体
 	 * @param id
@@ -114,9 +114,9 @@ public class BrandController {
 	 */
 	@RequestMapping("/findOne/{id}")
 	public TbBrand findOne(@PathVariable(value = "id") Long id){
-		return brandService.findOne(id);		
+		return brandService.findOne(id);
 	}
-	
+
 	/**
 	 * 批量删除
 	 * @param ids
@@ -126,14 +126,14 @@ public class BrandController {
 	public Result delete(@RequestBody Long[] ids){
 		try {
 			brandService.delete(ids);
-			return new Result(true, "删除成功"); 
+			return new Result(true, "删除成功");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new Result(false, "删除失败");
 		}
 	}
-	
-	
+
+
 
 	@RequestMapping("/search")
     public PageInfo<TbBrand> findPage(@RequestParam(value = "pageNo", defaultValue = "1", required = true) Integer pageNo,
@@ -141,5 +141,5 @@ public class BrandController {
                                       @RequestBody TbBrand brand) {
         return brandService.findPage(pageNo, pageSize, brand);
     }
-	
+
 }

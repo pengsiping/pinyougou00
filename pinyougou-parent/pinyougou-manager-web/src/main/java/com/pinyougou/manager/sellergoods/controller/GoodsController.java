@@ -68,18 +68,18 @@ public class GoodsController {
 	 * @return
 	 */
 	@RequestMapping("/findAll")
-	public List<TbGoods> findAll(){			
+	public List<TbGoods> findAll(){
 		return goodsService.findAll();
 	}
-	
-	
-	
+
+
+
 	@RequestMapping("/findPage")
     public PageInfo<TbGoods> findPage(@RequestParam(value = "pageNo", defaultValue = "1", required = true) Integer pageNo,
                                       @RequestParam(value = "pageSize", defaultValue = "10", required = true) Integer pageSize) {
         return goodsService.findPage(pageNo, pageSize);
     }
-	
+
 	/**
 	 * 增加
 	 * @param goods
@@ -95,7 +95,7 @@ public class GoodsController {
 			return new Result(false, "增加失败");
 		}
 	}
-	
+
 	/**
 	 * 修改
 	 * @param goods
@@ -135,9 +135,16 @@ public class GoodsController {
 			goodsService.updateStatus(status,ids);
 			if("1".equals(status)){
 				List<TbItem> tbItemListByIds = goodsService.findTbItemListByIds(ids);
-				MessageInfo messageInfo= new MessageInfo("Goods_Topic","Goods_update_tag","updateStatus",MessageInfo.METHOD_UPDATE,tbItemListByIds);
+				MessageInfo messageInfo= new MessageInfo("Goods_Topic",
+														"Goods_update_tag",
+														"updateStatus",
+														MessageInfo.METHOD_UPDATE,
+														tbItemListByIds);
 
-				SendResult result = producer.send(new Message(messageInfo.getTopic(), messageInfo.getTags(), messageInfo.getKeys(), JSON.toJSONString(messageInfo).getBytes()));
+				SendResult result = producer.send(new Message(messageInfo.getTopic(),
+															  messageInfo.getTags(),
+															  messageInfo.getKeys(),
+															  JSON.toJSONString(messageInfo).getBytes()));
 
 				System.out.println(">>>"+result.getSendStatus());
 
@@ -153,7 +160,7 @@ public class GoodsController {
 			return new Result(false, "更新失败");
 		}
 	}
-	
+
 	/**
 	 * 获取实体
 	 * @param id
@@ -161,9 +168,9 @@ public class GoodsController {
 	 */
 	@RequestMapping("/findOne/{id}")
 	public Goods findOne(@PathVariable(value = "id") Long id){
-		return goodsService.findOne(id);		
+		return goodsService.findOne(id);
 	}
-	
+
 	/**
 	 * 批量删除
 	 * @param ids
@@ -184,8 +191,8 @@ public class GoodsController {
 			return new Result(false, "删除失败");
 		}
 	}
-	
-	
+
+
 
 	@RequestMapping("/search")
     public PageInfo<TbGoods> findPage(@RequestParam(value = "pageNo", defaultValue = "1", required = true) Integer pageNo,
@@ -193,5 +200,5 @@ public class GoodsController {
                                       @RequestBody TbGoods goods) {
         return goodsService.findPage(pageNo, pageSize, goods);
     }
-	
+
 }
