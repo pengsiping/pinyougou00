@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-//import com.pinyougou.POIUtils;
+import com.pinyougou.POIUtils;
 import com.pinyougou.order.service.OrderService;
 import com.pinyougou.pojo.TbOrder;
 import entity.Result;
@@ -48,20 +48,20 @@ public class OrderController {
 	}
 
 
-//	@RequestMapping("/orderExport")
-//	public ResponseEntity<byte[]> orderExport(){
-//		try {
-//			List<TbOrder> orders = orderService.findAll();
-//			byte[] body = POIUtils.exportExcel(orders).toByteArray();
-//			HttpHeaders headers = new HttpHeaders();
-//			headers.add("Content-Disposition", "attachment; filename=order.xlsx");
-//			headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-//			return new ResponseEntity<>(body, headers, HttpStatus.OK);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
-//		}
-//	}
+	@RequestMapping("/orderExport")
+	public ResponseEntity<byte[]> orderExport(){
+		try {
+			List<TbOrder> orders = orderService.findAll();
+			byte[] body = POIUtils.exportExcel(orders).toByteArray();
+			HttpHeaders headers = new HttpHeaders();
+			headers.add("Content-Disposition", "attachment; filename=order.xlsx");
+			headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+			return new ResponseEntity<>(body, headers, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
+		}
+	}
 
 
 
