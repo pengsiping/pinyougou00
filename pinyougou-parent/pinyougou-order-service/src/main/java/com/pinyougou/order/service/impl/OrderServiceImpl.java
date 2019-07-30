@@ -277,6 +277,27 @@ public class OrderServiceImpl extends CoreServiceImpl<TbOrder> implements OrderS
     }
 
     @Override
+    public PageInfo<TbOrder> findAllOrder() {
+        PageHelper.startPage(1, 10);
+        List<TbOrder> list =  orderMapper.findAllSales();
+        PageInfo<TbOrder> info = new PageInfo<TbOrder>(list);
+        String s = JSON.toJSONString(info);
+        PageInfo<TbOrder> pageInfo = JSON.parseObject(s, PageInfo.class);
+        return pageInfo;
+    }
+
+    @Override
+    public PageInfo<TbOrder> findOrderInSomeTime(String startTime, String endTime) {
+        PageHelper.startPage(1, 10);
+        List<TbOrder> list =  orderMapper.findOnTimeSales(startTime,endTime);
+        PageInfo<TbOrder> info = new PageInfo<TbOrder>(list);
+        String s = JSON.toJSONString(info);
+        PageInfo<TbOrder> pageInfo = JSON.parseObject(s, PageInfo.class);
+        return pageInfo;
+    }
+
+
+    @Override
     public void add(TbOrder record) {
         //获取该用户购物车数据
         List<Cart> redisCartList = (List<Cart>) redisTemplate.boundHashOps("REDIS_CARTLIST").get(record.getUserId());

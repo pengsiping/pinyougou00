@@ -13,8 +13,31 @@ var app = new Vue({
         addresses:[],
         //我的足迹的数据变量
         FootList:[]
+        addresses:[],
+        cartList:[],
+        totalNum:0,
+        totalPrices:0
     },
     methods: {
+        findCartList:function(){
+            axios.get("user/findCartList.shtml").then(function (response) {
+                //alert(response.data);
+                app.cartList=response.data;
+                app.totalNum=0;
+                app.totalPrices=0;
+                for (var i = 0; i < response.data.length; i++) {
+                    var obj = response.data[i]; //Cart
+                    for (var j = 0; j < obj.orderItemList.length; j++) {
+                        //tbOrderItem
+                        var objx=obj.orderItemList[j];
+                        app.totalNum+=objx.num;
+                        app.totalPrices+=objx.totalFee;
+                    }
+                }
+
+            })
+        },
+
         searchList: function (curPage) {
             axios.post('/user/search.shtml?pageNo=' + curPage, this.searchEntity).then(function (response) {
                 //获取数据
@@ -132,6 +155,15 @@ var app = new Vue({
                     alert(response.data.message);
             })
         },
+        getName: function () {
+            alert("get");
+            axios.get("login/getName.shtml").then(function (response) {
+
+                alert(response.data);
+                app.name = response.data;
+
+            })
+        },
         addUserInfo:function () {
             axios.post("/user/addUserInfo.shtml",app.userInfo).then(function (response) {
                 if (response.data) {
@@ -172,6 +204,8 @@ var app = new Vue({
         },
 
 
+
+
     },
     //钩子函数 初始化了事件和
     created: function () {
@@ -180,6 +214,9 @@ var app = new Vue({
 
         //页面加载展示 我的足迹
         this.findMyFootprint();
+        this.findCartList();
+
+
     }
 
 })

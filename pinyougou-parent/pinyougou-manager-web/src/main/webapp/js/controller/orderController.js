@@ -91,6 +91,9 @@
             }).catch(function (error) {
                 console.log("1231312131321");
             });
+        },
+        orderDetail:function (id) {
+            window.location.href="orderDetail.html?id="+id;
         }
 
 

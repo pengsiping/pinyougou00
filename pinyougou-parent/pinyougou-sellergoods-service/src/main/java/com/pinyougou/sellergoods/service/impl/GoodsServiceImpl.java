@@ -138,7 +138,7 @@ public class GoodsServiceImpl extends CoreServiceImpl<TbGoods> implements GoodsS
             tbItem.setTitle(title);
 
             //设置image
-            //[{"color":"hongse","url":"http://192.168.25.133/group1/M00/00/04/wKgZhVrkS-WAGXXyAAJQksgqu3o373.jpg"}]
+            //[{"color":"hongse","url":"http://192.168.25.129/group1/M00/00/04/wKgZhVrkS-WAGXXyAAJQksgqu3o373.jpg"}]
             String itemImages = tbGoodsDesc.getItemImages();
             //todo 增加非空判断
             List<Map> itemImage = JSON.parseArray(itemImages, Map.class);
@@ -241,7 +241,7 @@ public class GoodsServiceImpl extends CoreServiceImpl<TbGoods> implements GoodsS
                 tbItem.setTitle(title);
 
                 //设置image
-                //[{"color":"hongse","url":"http://192.168.25.133/group1/M00/00/04/wKgZhVrkS-WAGXXyAAJQksgqu3o373.jpg"}]
+                //[{"color":"hongse","url":"http://192.168.25.129/group1/M00/00/04/wKgZhVrkS-WAGXXyAAJQksgqu3o373.jpg"}]
                 String itemImages = tbGoodsDesc.getItemImages();
 
                 List<Map> itemImage = JSON.parseArray(itemImages, Map.class);

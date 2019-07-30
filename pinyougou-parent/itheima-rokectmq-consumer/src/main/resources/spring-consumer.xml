@@ -4,7 +4,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean class="org.apache.rocketmq.client.consumer.DefaultMQPushConsumer" id="defaultMQPushConsumer" init-method="start" destroy-method="shutdown">
-        <property name="namesrvAddr" value="127.0.0.1:9876"></property>
+        <property name="namesrvAddr" value="192.168.25.129:9876"></property>
         <!--消费模式 默认还是集群模式，此处可以不配置-->
         <property name="messageModel" value="CLUSTERING"></property>
         <property name="subscription">

@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * controller
@@ -41,6 +42,11 @@ public class UserController {
         }
     }
 
+
+    @RequestMapping("/showChart")
+    public Map<String,Object> showChart(){
+        return userService.showChart();
+    }
 
     /**
      * 返回全部列表
@@ -103,6 +109,8 @@ public class UserController {
     public TbUser findOne(@PathVariable(value = "id") Long id) {
         return userService.findOne(id);
     }
+
+
 
     /**
      * 批量删除

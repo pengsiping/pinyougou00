@@ -1,5 +1,4 @@
 package com.pinyougou.sellergoods.service.impl;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
+import com.github.pagehelper.PageInfo; 									  
 import org.apache.commons.lang3.StringUtils;
 import com.pinyougou.core.service.CoreServiceImpl;
 
@@ -21,37 +20,44 @@ import org.springframework.data.redis.core.RedisTemplate;
 import tk.mybatis.mapper.entity.Example;
 
 import com.pinyougou.mapper.TbItemCatMapper;
-import com.pinyougou.pojo.TbItemCat;
+import com.pinyougou.pojo.TbItemCat;  
 
 import com.pinyougou.sellergoods.service.ItemCatService;
+
+import javax.annotation.Resource;
 
 
 /**
  * 服务实现层
  *
  * @author Administrator
+ *
  */
 @Service
 public class ItemCatServiceImpl extends CoreServiceImpl<TbItemCat> implements ItemCatService {
 
-
-    private TbItemCatMapper itemCatMapper;
-
-
-    @Autowired
-    public ItemCatServiceImpl(TbItemCatMapper itemCatMapper) {
-        super(itemCatMapper, TbItemCat.class);
-        this.itemCatMapper = itemCatMapper;
-    }
+	
+	private TbItemCatMapper itemCatMapper;
 
 
-    @Autowired
+	@Autowired
+	public ItemCatServiceImpl(TbItemCatMapper itemCatMapper) {
+		super(itemCatMapper, TbItemCat.class);
+		this.itemCatMapper=itemCatMapper;
+	}
+
+
+
+	@Autowired
     private RedisTemplate redisTemplate;
 
+	
+	
 
-    @Override
+	
+	@Override
     public PageInfo<TbItemCat> findPage(Integer pageNo, Integer pageSize) {
-        PageHelper.startPage(pageNo, pageSize);
+        PageHelper.startPage(pageNo,pageSize);
         List<TbItemCat> all = itemCatMapper.selectAll();
         PageInfo<TbItemCat> info = new PageInfo<TbItemCat>(all);
 
@@ -61,21 +67,23 @@ public class ItemCatServiceImpl extends CoreServiceImpl<TbItemCat> implements It
         return pageInfo;
     }
 
+	
+	
 
-    @Override
+	 @Override
     public PageInfo<TbItemCat> findPage(Integer pageNo, Integer pageSize, TbItemCat itemCat) {
-        PageHelper.startPage(pageNo, pageSize);
+        PageHelper.startPage(pageNo,pageSize);
 
         Example example = new Example(TbItemCat.class);
         Example.Criteria criteria = example.createCriteria();
 
-        if (itemCat != null) {
-            if (StringUtils.isNotBlank(itemCat.getName())) {
-                criteria.andLike("name", "%" + itemCat.getName() + "%");
-                //criteria.andNameLike("%"+itemCat.getName()+"%");
-            }
-
-        }
+        if(itemCat!=null){			
+						if(StringUtils.isNotBlank(itemCat.getName())){
+				criteria.andLike("name","%"+itemCat.getName()+"%");
+				//criteria.andNameLike("%"+itemCat.getName()+"%");
+			}
+	
+		}
         List<TbItemCat> all = itemCatMapper.selectByExample(example);
         PageInfo<TbItemCat> info = new PageInfo<TbItemCat>(all);
         //序列化再反序列化
@@ -86,79 +94,72 @@ public class ItemCatServiceImpl extends CoreServiceImpl<TbItemCat> implements It
     }
 
     @Override
-    public List<TbItemCat> findByParentId(Long parentId) {
-        TbItemCat cat = new TbItemCat();
-        cat.setParentId(parentId);
-        List<TbItemCat> tbItemCats = itemCatMapper.select(cat);
+    public List<TbItemCat> findByParentId(Long parentId){
+        // 1.先从redis缓存中 , 获取三级分类信息!
+        List<TbItemCat> itemCat01List  = (List<TbItemCat>) redisTemplate.boundValueOps("itemCat03").get();
+        //List<TbItemCat> itemCat01List=new ArrayList<>();
+        // 2.若缓存中没有数据 , 从数据库中查询( 并放到缓存中 )
+        if (itemCat01List==null){
+            // 缓存穿透 -> 请求排队等候.
+            synchronized (this){
+                // 进行二次校验?
+                itemCat01List  = (List<TbItemCat>) redisTemplate.boundValueOps("itemCat03").get();
+                if (itemCat01List==null){
+                    // 创建一个集合 , 存放一级分类
+                    itemCat01List = new ArrayList<>();
 
-        //根据typeId获取相对应的手机品牌及规格
-        for (TbItemCat tbItemCat : tbItemCats) {
-            redisTemplate.boundHashOps("itemCat").put(tbItemCat.getName(), tbItemCat.getTypeId());
-        }
-        return tbItemCats;
-    }
+                    // 根据parent_id = 0 , 获取一级分类信息!
+                    List<TbItemCat> itemCatList = itemCatMapper.selectByParentId(parentId);
+                    for (TbItemCat itemCat : itemCatList) {
+                        // 设置一级分类信息!
+                        TbItemCat itemCat01 = new TbItemCat();
+                        itemCat01.setId(itemCat.getId());
+                        itemCat01.setName(itemCat.getName());
+                        itemCat01.setParentId(itemCat.getParentId());
+
+                        // 根据一级分类的id -> 找到对应的二级分类!
+                        List<TbItemCat> itemCatList02 = new ArrayList<>();
+                        Example itemCatQuery02 = new Example(TbItemCat.class);
+                        itemCatQuery02.createCriteria().andEqualTo("parentId",itemCat.getId());
+                        List<TbItemCat> itemCat02List = itemCatMapper.selectByExample(itemCatQuery02);
+                        for (TbItemCat itemCat2 : itemCat02List) {
+                            // 设置二级分类信息!
+                            TbItemCat itemCat02 = new TbItemCat();
+                            itemCat02.setId(itemCat2.getId());
+                            itemCat02.setName(itemCat2.getName());
+                            itemCat02.setParentId(itemCat2.getParentId());
 
 
-    /**
-     * 获取商品分类
-     *
-     * @param parentId
-     * @return
-     */
-
-    @Override
-    public List<TbItemCat> findItemList(Long parentId) {
-        List<TbItemCat> itemCatList01 = (List<TbItemCat>) redisTemplate.boundValueOps("itemCat03").get();
-        if (itemCatList01 == null) {
-
-            itemCatList01 = new ArrayList<>();
-
-            //设置一级目录
-            List<TbItemCat> tbItemCatList01 = itemCatMapper.selectItemCatList(parentId);
-            for (TbItemCat tbItemCat : tbItemCatList01) {
-                TbItemCat tbItemCat01 = new TbItemCat();
-                tbItemCat01.setId(tbItemCat.getId());
-                tbItemCat01.setName(tbItemCat.getName());
-                tbItemCat01.setParentId(tbItemCat.getParentId());
-
-                Example example = new Example(TbItemCat.class);
-                example.createCriteria().andEqualTo("parentId",tbItemCat01.getId());
-                List<TbItemCat> tbItemCatList02 = itemCatMapper.selectByExample(example);
-
-                List<TbItemCat> itemCatList02 = new ArrayList<>();
-                //设置二级目录
-                for (TbItemCat itemCat : tbItemCatList02) {
-                    TbItemCat tbItemCat02 = new TbItemCat();
-                    tbItemCat02.setId(itemCat.getId());
-                    tbItemCat02.setParentId(itemCat.getParentId());
-                    tbItemCat02.setName(itemCat.getName());
-                    //根据二级目录id查找三级目录
-                    Example example1 = new Example(TbItemCat.class);
-                    example.createCriteria().andEqualTo("parentId",tbItemCat01.getId());
-                    List<TbItemCat> tbItemCatList03 = itemCatMapper.selectByExample(example1);
-                    tbItemCat02.setList(tbItemCatList03);
-
-                    List<TbItemCat> itemCatList03 = new ArrayList<>();
-
-                    //设置三级目录
-                    for (TbItemCat cat : tbItemCatList03) {
-                        TbItemCat tbItemCat03 = new TbItemCat();
-                        tbItemCat03.setName(cat.getName());
-                        //设置三级目录列表
-                        itemCatList03.add(tbItemCat03);
+                            // 根据二级分类的id -> 找到对应的三级分类!
+                            List<TbItemCat> itemCatList03 = new ArrayList<>();
+                            Example itemCatQuery03 = new Example(TbItemCat.class);
+                            itemCatQuery03.createCriteria().andEqualTo("parentId",itemCat02.getId());
+                            List<TbItemCat> itemCat03List = itemCatMapper.selectByExample(itemCatQuery03);
+                            for (TbItemCat itemCat3 : itemCat03List) {
+                                itemCatList03.add(itemCat3);
+                            }
+                            itemCat02.setItemCatList(itemCatList03);  // 二级分类中 添加 三级分类.
+                            itemCatList02.add(itemCat02);       // 添加二级分类.
+                        }
+                        itemCat01.setItemCatList(itemCatList02); // 一级分类中 添加 二级分类!
+                        itemCat01List.add(itemCat01);  // 添加一级分类
                     }
-                    //设置二级目录里面的三级列表
-                    tbItemCat02.setList(itemCatList03);
-                    itemCatList02.add(tbItemCat02);
-                }
-                //设置一级目录里面的二级目录列表
-                tbItemCat01.setList(itemCatList02);
-                itemCatList01.add(tbItemCat01);
+                    // 将查询到的数据放入缓存中!
+                    redisTemplate.boundValueOps("itemCat03").set(itemCat01List);
+                    return itemCat01List;
+               }
             }
 
         }
-        redisTemplate.boundValueOps("itemCat03").set(itemCatList01);
-        return itemCatList01;
+
+        // 3.若缓存中有数据 , 直接返回即可!
+        return itemCat01List;
+
+    }
+
+    @Override
+    public List<TbItemCat> findFloorTitle(Long parentId) {
+        return itemCatMapper.selectForFloorTitle(parentId);
     }
 
 }
