@@ -42,6 +42,10 @@ public class UserController {
         }
     }
 
+    @RequestMapping("/count")
+    public List<Map<String,String>> count(String type){
+        return userService.count(type);
+    }
 
     @RequestMapping("/showChart")
     public Map<String,Object> showChart(){

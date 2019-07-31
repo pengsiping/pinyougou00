@@ -1,5 +1,8 @@
 package com.pinyougou.service;
+import com.github.pagehelper.PageInfo;
+import com.pinyougou.core.service.CoreService;
 import java.util.List;
+import java.util.Map;
 
 import com.pinyougou.pojo.TbAddress;
 import com.pinyougou.pojo.TbOrder;
@@ -9,8 +12,7 @@ import com.github.pagehelper.PageInfo;
 import com.pinyougou.core.service.CoreService;
 import entity.Cart;
 
-import com.pinyougou.pojo.TbUser;
-
+import java.util.List;
 import java.util.Map;
 /**
  * 服务层接口
@@ -72,4 +74,10 @@ public interface UserService extends CoreService<TbUser> {
 	int updateAddress(TbAddress item);
 
 	void register(TbUser userInfo,String userName);
+
+	List<Map<String, String>> count(String type);
+
+    void findMyFootprint(Long goodsId, String userId);
+
+	List<Map<String, Object>> findAllFootprint(String userId);
 }

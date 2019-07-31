@@ -26,7 +26,7 @@ public class SysConstants {
 
     //所有商品的集合数据的KEY
     public static final String SEC_KILL_GOODS ="seckillGoods" ;
-
     //秒杀商品的订单的KEY
     public static final String SEC_KILL_ORDER="seckillOrder";
+    public static final String MY_FOOTPRINT = "My_Footprint";
 }

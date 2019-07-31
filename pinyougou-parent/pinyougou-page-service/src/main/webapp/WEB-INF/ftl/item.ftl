@@ -578,6 +578,7 @@
 </body>
 <script src="plugins/vue/vue.js"></script>
 <script src="plugins/axios/axios.js"></script>
+<script src="js/controller/base.js"></script>
 <script src="js/controller/itemController.js"></script>
 
 

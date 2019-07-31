@@ -118,9 +118,6 @@ var app = new Vue({
             }
             return false;
         }
-
-
-
     },
     //钩子函数 初始化了事件和
     created: function () {
