@@ -9,7 +9,7 @@
         orderList:[],
         orderEntity:{order:{},goods:{}},
         ids:[],
-        searchEntity:{}
+        searchEntity:{id:''}
     },
     methods: {
         searchList:function (curPage) {

@@ -78,7 +78,10 @@ public class OrderServiceImpl extends CoreServiceImpl<TbOrder> implements OrderS
         Example example = new Example(TbOrder.class);
         Example.Criteria criteria = example.createCriteria();
         if (order != null) {
-            if (StringUtils.isNotBlank(order.getPaymentType())) {
+            if (order.getOrderId()!=null) {
+                criteria.andLike("orderId", "%" + order.getOrderId() + "%");
+                //criteria.andPaymentTypeLike("%"+order.getPaymentType()+"%");
+            }if (StringUtils.isNotBlank(order.getPaymentType())) {
                 criteria.andLike("paymentType", "%" + order.getPaymentType() + "%");
                 //criteria.andPaymentTypeLike("%"+order.getPaymentType()+"%");
             }

@@ -77,7 +77,10 @@ public class SeckillOrderServiceImpl extends CoreServiceImpl<TbSeckillOrder> imp
         Example.Criteria criteria = example.createCriteria();
 
         if (seckillOrder != null) {
-            if (StringUtils.isNotBlank(seckillOrder.getUserId())) {
+            if (seckillOrder.getId()!=null) {
+                criteria.andLike("id", "%" + seckillOrder.getId().toString() + "%");
+                //criteria.andUserIdLike("%"+seckillOrder.getUserId()+"%");
+            }if (StringUtils.isNotBlank(seckillOrder.getUserId())) {
                 criteria.andLike("userId", "%" + seckillOrder.getUserId() + "%");
                 //criteria.andUserIdLike("%"+seckillOrder.getUserId()+"%");
             }

@@ -50,10 +50,8 @@
             <div class="box-tools pull-right">
 
                 <div class="has-feedback">
-                    开始时间：<input type="text" :value="searchEntity.createTime">
-                    结束时间：<input type="text" :value="searchEntity.endTime">
-                    商品名称：<input type="text" :value="searchEntity.sellerId">
-                    <button class="btn btn-default">查询</button>
+                    订单id：<input type="text" v-model="searchEntity.orderId">
+                    <button @click="searchList(1)" class="btn btn-default">查询</button>
                 </div>
             </div>
             <!--工具栏/-->
